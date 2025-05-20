@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -24,6 +25,7 @@ class User extends Authenticatable
         'password',
         'due_date',
         'city',
+        'push_subscription'
     ];
 
     /**
@@ -47,6 +49,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'due_date' => 'date',
+            'push_subscription' => 'json'
         ];
+    }
+
+    /**
+     * Get the babies for the user.
+     */
+    public function babies(): HasMany
+    {
+        return $this->hasMany(Baby::class);
     }
 }

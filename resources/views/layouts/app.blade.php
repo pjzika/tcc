@@ -3,81 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>MaternArte - Apoio para Mães de Primeira Viagem</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #FF69B4;
-            --secondary-color: #FFB6C1;
-            --accent-color: #FFE4E1;
+            --primary-color: #A65D57;
+            --secondary-color: #D3A4A2;
+            --background-color: #FFF5F5;
+            --text-color: #4A3735;
         }
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #FFF5F5;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
         }
-        .navbar {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        /* Navegação Superior */
+        .top-nav {
+            background-color: var(--background-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(166, 93, 87, 0.1);
         }
-        .navbar-brand {
-            color: var(--primary-color) !important;
-            font-weight: 700;
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        .logo-container img {
+            height: 40px;
+        }
+        .logo-text {
             font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .nav-items {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
         }
         .nav-link {
-            color: #333 !important;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+        .nav-link.active {
+            color: var(--primary-color);
+        }
+        .btn-sair {
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             font-weight: 500;
         }
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
+        .btn-sair i {
+            font-size: 1.1rem;
         }
-        .btn-primary:hover {
-            background-color: #FF1493;
-            border-color: #FF1493;
+        .btn-auth {
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-login {
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .btn-login:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-register {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-register:hover {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        /* Conteúdo */
+        .main-content {
+            padding: 2rem;
+        }
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            font-size: 0.9rem;
+            margin-top: auto;
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            window.fetchConfig = {
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            };
+        });
+    </script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">MaternArte</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/sobre">Sobre</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/recursos">Recursos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Entrar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white ms-2" href="/cadastro">Cadastrar</a>
-                    </li>
-                </ul>
-            </div>
+    <nav class="top-nav">
+        <a href="/" class="logo-container">
+            <img src="{{ asset('images/logo.svg') }}" alt="MaternArte Logo">
+            <span class="logo-text">Matern<span style="color: #D3A4A2">Arte</span></span>
+        </a>
+        <div class="nav-items">
+            <a href="/" class="nav-link {{ request()->is('/') ? 'active' : '' }}">Início</a>
+            <a href="/sobre" class="nav-link {{ request()->is('sobre*') ? 'active' : '' }}">Sobre</a>
+            <a href="/recursos" class="nav-link {{ request()->is('recursos*') ? 'active' : '' }}">Recursos</a>
+            @auth
+                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn-sair" style="border: none; background: none; cursor: pointer; padding: 0;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sair</span>
+                    </button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="btn-auth btn-login">Login</a>
+                <a href="{{ route('register') }}" class="btn-auth btn-register">Registrar</a>
+            @endauth
         </div>
     </nav>
 
-    <main class="py-4">
+    <main class="main-content">
         @yield('content')
     </main>
 
-    <footer class="bg-white py-4 mt-5">
-        <div class="container text-center">
-            <p class="mb-0">© 2024 MaternArte - Todos os direitos reservados</p>
-        </div>
+    <footer>
+        © MaternArte {{ date('Y') }} Todos os direitos reservados
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/notifications.js') }}"></script>
+    @stack('scripts')
 </body>
 </html> 

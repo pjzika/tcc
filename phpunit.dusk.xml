@@ -1,0 +1,14 @@
+<phpunit>
+    <testsuites>
+        <testsuite name="Browser Tests">
+            <directory>./tests/Browser</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <env name="APP_URL" value="http://localhost"/>
+        <env name="BROWSER" value="chrome"/>
+    </php>
+    <extensions>
+        <extension class="Laravel\Dusk\DuskServiceProvider"/>
+    </extensions>
+</phpunit>

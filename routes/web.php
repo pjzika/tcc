@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\TipsController;
 
 // Rotas públicas
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -31,4 +33,13 @@ Route::middleware('auth')->group(function () {
     
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/feeding', [DashboardController::class, 'storeFeeding'])->name('feeding.store');
+    Route::get('/dashboard/feeding/recent', [DashboardController::class, 'getRecentFeedings'])->name('feeding.recent');
+    Route::post('/dashboard/alarm/{alarmId}/toggle', [DashboardController::class, 'toggleAlarm'])->name('alarm.toggle');
+    Route::post('/dashboard/baby', [DashboardController::class, 'storeBaby'])->name('baby.store');
+    Route::get('/dashboard/tips/daily', [TipsController::class, 'getDailyTips'])->name('tips.daily');
+    
+    // Rotas de notificações
+    Route::post('/notifications/subscribe', [NotificationController::class, 'subscribe'])->name('notifications.subscribe');
+    Route::post('/notifications/send', [NotificationController::class, 'sendNotification'])->name('notifications.send');
 });
