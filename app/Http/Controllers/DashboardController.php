@@ -75,7 +75,10 @@ class DashboardController extends Controller
     public function storeFeeding(Request $request)
     {
         try {
+            Log::info('Iniciando registro de amamentação', ['request' => $request->all()]);
+
             if (!Auth::check()) {
+                Log::warning('Tentativa de registro sem autenticação');
                 return response()->json([
                     'success' => false,
                     'message' => 'Usuário não autenticado. Por favor, faça login novamente.'
@@ -83,7 +86,13 @@ class DashboardController extends Controller
             }
 
             $baby = Baby::find($request->baby_id);
+            Log::info('Bebê encontrado', ['baby' => $baby]);
+
             if (!$baby || $baby->user_id !== Auth::id()) {
+                Log::warning('Bebê não encontrado ou não pertence ao usuário', [
+                    'baby_id' => $request->baby_id,
+                    'user_id' => Auth::id()
+                ]);
                 return response()->json([
                     'success' => false,
                     'message' => 'Bebê não encontrado ou não pertence ao usuário.'
@@ -93,39 +102,66 @@ class DashboardController extends Controller
             $validated = $request->validate([
                 'baby_id' => 'required|exists:babies,id',
                 'started_at' => 'required|date',
-                'ended_at' => 'required|date|after:started_at',
+                'ended_at' => 'nullable|date|after:started_at',
                 'quantity' => 'nullable|integer|min:0'
             ]);
 
+            Log::info('Dados validados', ['validated' => $validated]);
+
             $startedAt = Carbon::parse($validated['started_at']);
             $endedAt = Carbon::parse($validated['ended_at']);
-            $duration = $endedAt->diffInMinutes($startedAt);
+            
+            // Calcular a duração em minutos
+            $duration = $endedAt->diffInSeconds($startedAt) / 60;
+
+            Log::info('Cálculos realizados', [
+                'started_at' => $startedAt,
+                'ended_at' => $endedAt,
+                'duration' => $duration
+            ]);
 
             $feeding = Feeding::create([
                 'baby_id' => $validated['baby_id'],
                 'started_at' => $startedAt,
                 'ended_at' => $endedAt,
-                'duration' => $duration,
+                'duration' => (int)$duration,
                 'quantity' => $validated['quantity']
             ]);
+
+            Log::info('Registro criado com sucesso', ['feeding' => $feeding]);
+
+            // Buscar os 3 registros mais recentes
+            $recentFeedings = $baby->feedings()
+                ->whereDate('started_at', today())
+                ->orderBy('started_at', 'desc')
+                ->take(3)
+                ->get();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Amamentação registrada com sucesso!',
-                'feeding' => $feeding
+                'feeding' => $feeding,
+                'recent_feedings' => $recentFeedings
             ]);
 
         } catch (ValidationException $e) {
+            Log::warning('Erro de validação', ['errors' => $e->errors()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Dados inválidos. Por favor, verifique os campos.',
                 'errors' => $e->errors()
             ], 422);
-
         } catch (\Exception $e) {
+            Log::error('Erro ao registrar amamentação:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao registrar a amamentação. Por favor, tente novamente.'
+                'message' => 'Ocorreu um erro ao registrar a amamentação. Por favor, tente novamente.',
+                'debug' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
     }
@@ -265,6 +301,45 @@ class DashboardController extends Controller
         ];
         
         return response()->json($statistics);
+    }
+
+    public function getRecentFeedings(Request $request)
+    {
+        try {
+            $babyId = $request->query('baby_id');
+            
+            if (!$babyId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID do bebê não fornecido'
+                ], 400);
+            }
+
+            $baby = Baby::where('user_id', Auth::id())
+                ->findOrFail($babyId);
+
+            $feedings = $baby->feedings()
+                ->whereDate('started_at', today())
+                ->orderBy('started_at', 'desc')
+                ->take(3)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'feedings' => $feedings
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar registros recentes:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao buscar registros recentes'
+            ], 500);
+        }
     }
 }
 

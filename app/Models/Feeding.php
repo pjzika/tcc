@@ -26,23 +26,12 @@ class Feeding extends Model
     ];
 
     protected $appends = [
-        'formatted_time',
         'formatted_duration'
     ];
 
     public function baby(): BelongsTo
     {
         return $this->belongsTo(Baby::class);
-    }
-
-    public function getFormattedStartedAtAttribute()
-    {
-        return $this->started_at->format('H:i');
-    }
-
-    public function getFormattedEndedAtAttribute()
-    {
-        return $this->ended_at->format('H:i');
     }
 
     public function getFormattedDurationAttribute()

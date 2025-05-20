@@ -12,6 +12,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\TipsController;
 
 // Rotas públicas
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -47,25 +48,34 @@ Route::middleware('auth')->group(function () {
         return redirect('/dashboard')->with('verified', true);
     })->middleware(['signed'])->name('verification.verify');
 
-    // Rota de reenvio de verificação (aceita GET e POST)
     Route::match(['get', 'post'], '/email/verification-notification', function (Request $request) {
         $request->user()->sendEmailVerificationNotification();
         return back()->with('resent', true);
     })->name('verification.resend');
 
+    // Logout
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
     // Rotas que precisam de verificação de email
     Route::middleware('verified')->group(function () {
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        
+        // Feedings
         Route::post('/dashboard/feeding', [DashboardController::class, 'storeFeeding'])->name('feeding.store');
+        Route::get('/dashboard/feeding/recent', [DashboardController::class, 'getRecentFeedings'])->name('feeding.recent');
+        
+        // Alarms
         Route::post('/dashboard/alarm/{alarmId}/toggle', [DashboardController::class, 'toggleAlarm'])->name('alarm.toggle');
+        
+        // Baby
         Route::post('/dashboard/baby', [DashboardController::class, 'storeBaby'])->name('baby.store');
         
-        // Rotas de notificações
+        // Tips
+        Route::get('/dashboard/tips/daily', [TipsController::class, 'getDailyTips'])->name('tips.daily');
+        
+        // Notificações
         Route::post('/notifications/subscribe', [NotificationController::class, 'subscribe'])->name('notifications.subscribe');
         Route::post('/notifications/send', [NotificationController::class, 'sendNotification'])->name('notifications.send');
     });
-
-    // Logout
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });

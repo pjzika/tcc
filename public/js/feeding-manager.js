@@ -1,79 +1,181 @@
 class FeedingManager {
     constructor() {
+        console.log('Inicializando FeedingManager');
         this.isFeeding = false;
         this.startTime = null;
         this.timer = null;
         this.duration = 0;
+        this.seconds = 0;
+        this.initializeUI();
     }
 
-    async start() {
-        if (this.isFeeding) return;
+    initializeUI() {
+        console.log('Inicializando UI');
+        // Inicializa os elementos da UI
+        this.timerDisplay = document.getElementById('timer');
+        this.startButton = document.getElementById('btnStart');
+        this.stopButton = document.getElementById('btnStop');
+        this.inputSection = document.getElementById('inputSection');
+        this.mlInput = document.getElementById('ml');
+        this.registrosContainer = document.getElementById('registros');
+        this.saveButton = document.getElementById('btnSave');
+        this.babySelector = document.getElementById('baby-selector');
+
+        // Log dos elementos encontrados
+        console.log('Elementos encontrados:', {
+            timerDisplay: this.timerDisplay,
+            startButton: this.startButton,
+            stopButton: this.stopButton,
+            inputSection: this.inputSection,
+            mlInput: this.mlInput,
+            registrosContainer: this.registrosContainer,
+            saveButton: this.saveButton,
+            babySelector: this.babySelector
+        });
+
+        if (!this.saveButton) {
+            console.error('Botão de salvar não encontrado!');
+            return;
+        }
+
+        // Remover event listeners existentes
+        const oldStartHandler = this.start.bind(this);
+        const oldStopHandler = this.stop.bind(this);
+        const oldSaveHandler = this.registrar.bind(this);
+
+        this.startButton.removeEventListener('click', oldStartHandler);
+        this.stopButton.removeEventListener('click', oldStopHandler);
+        this.saveButton.removeEventListener('click', oldSaveHandler);
+
+        // Adiciona event listeners
+        this.startButton.addEventListener('click', () => {
+            console.log('Botão iniciar clicado');
+            this.start();
+        });
         
-        if (!confirm('Deseja iniciar a amamentação?')) return;
+        this.stopButton.addEventListener('click', () => {
+            console.log('Botão parar clicado');
+            this.stop();
+        });
         
-        this.isFeeding = true;
-        this.startTime = new Date();
-        this.duration = 0;
-        
-        const timerDisplay = document.getElementById('timer');
-        if (timerDisplay) {
-            timerDisplay.style.display = 'block';
+        this.saveButton.addEventListener('click', () => {
+            console.log('Botão salvar clicado');
+            this.registrar();
+        });
+
+        // Inicializa a exibição
+        this.updateDisplay();
+    }
+
+    updateDisplay() {
+        const min = String(Math.floor(this.seconds / 60)).padStart(2, '0');
+        const sec = String(this.seconds % 60).padStart(2, '0');
+        this.timerDisplay.textContent = `${min}:${sec}`;
+    }
+
+    start() {
+        console.log('Método start chamado');
+        if (this.isFeeding) {
+            console.log('Já está amamentando, retornando');
+            return;
         }
         
-        document.getElementById('feeding-button').textContent = 'Parar Amamentação';
-        document.getElementById('feeding-button').classList.remove('btn-primary');
-        document.getElementById('feeding-button').classList.add('btn-danger');
+        if (!confirm('Deseja iniciar a amamentação?')) {
+            console.log('Usuário cancelou início da amamentação');
+            return;
+        }
         
-        this.timer = setInterval(() => this.updateTimer(), 1000);
+        console.log('Iniciando amamentação');
+        this.isFeeding = true;
+        this.startTime = new Date();
+        this.seconds = 0;
+        
+        this.timer = setInterval(() => {
+            this.seconds++;
+            this.updateDisplay();
+        }, 1000);
+
+        this.startButton.disabled = true;
+        this.stopButton.disabled = false;
+        this.inputSection.style.display = 'none';
     }
 
-    async stop() {
-        if (!this.isFeeding) return;
+    stop() {
+        console.log('Método stop chamado');
+        if (!this.isFeeding) {
+            console.log('Não está amamentando, retornando');
+            return;
+        }
         
-        if (!confirm('Deseja parar a amamentação?')) return;
+        if (!confirm('Deseja parar a amamentação?')) {
+            console.log('Usuário cancelou parada da amamentação');
+            return;
+        }
         
+        console.log('Parando amamentação');
         clearInterval(this.timer);
-        const endTime = new Date();
-        
-        const quantity = prompt('Quantidade em ml (opcional):');
-        
+        this.isFeeding = false;
+        this.startButton.disabled = false;
+        this.stopButton.disabled = true;
+        this.inputSection.style.display = 'block';
+    }
+
+    async registrar() {
         try {
-            console.log('Iniciando processo de parada da amamentação');
+            // Evitar envios duplicados
+            if (this.saveButton.disabled) {
+                console.log('Registro já em andamento, ignorando clique');
+                return;
+            }
+
+            this.saveButton.disabled = true;
+            console.log('Iniciando registro de amamentação');
+            console.log('Estado atual:', {
+                isFeeding: this.isFeeding,
+                startTime: this.startTime,
+                seconds: this.seconds,
+                babySelector: this.babySelector?.value
+            });
             
-            const metaToken = document.querySelector('meta[name="csrf-token"]');
-            if (!metaToken) {
-                throw new Error('Meta tag do CSRF não encontrada');
+            if (this.seconds === 0) {
+                alert('Não há amamentação para registrar.');
+                return;
             }
 
-            const csrfToken = metaToken.getAttribute('content');
-            if (!csrfToken) {
-                throw new Error('Token CSRF não disponível');
+            if (!this.babySelector || !this.babySelector.value) {
+                alert('Por favor, selecione um bebê.');
+                return;
             }
 
-            const babySelector = document.getElementById('baby-selector');
-            if (!babySelector) {
-                throw new Error('Seletor de bebê não encontrado');
-            }
+            const mlInput = this.mlInput.value;
+            const ml = mlInput ? parseInt(mlInput) : null;
+            const endTime = new Date();
 
-            if (!babySelector.value) {
-                throw new Error('Por favor, selecione um bebê');
-            }
-
+            // Preparar dados para envio
             const requestData = {
-                baby_id: babySelector.value,
+                baby_id: this.babySelector.value,
                 started_at: this.startTime.toISOString(),
                 ended_at: endTime.toISOString(),
-                quantity: quantity ? parseInt(quantity) : null
+                quantity: ml
             };
 
-            console.log('Dados da requisição:', requestData);
-            console.log('Token CSRF:', csrfToken);
+            console.log('Dados para envio:', requestData);
 
+            // Obter token CSRF
+            const token = document.querySelector('meta[name="csrf-token"]');
+            if (!token) {
+                console.error('Token CSRF não encontrado');
+                throw new Error('Token CSRF não encontrado');
+            }
+
+            console.log('Token CSRF encontrado:', token.content);
+
+            // Salvar no banco de dados
             const response = await fetch('/dashboard/feeding', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
+                    'X-CSRF-TOKEN': token.content,
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -85,6 +187,10 @@ class FeedingManager {
             console.log('Resposta do servidor:', data);
 
             if (!response.ok) {
+                console.error('Erro na resposta:', {
+                    status: response.status,
+                    data: data
+                });
                 if (response.status === 422) {
                     const errorMessage = data.errors ? 
                         Object.values(data.errors).flat().join('\n') : 
@@ -94,144 +200,78 @@ class FeedingManager {
                 throw new Error(data.message || `Erro HTTP: ${response.status}`);
             }
 
-            if (!data.success) {
-                throw new Error(data.message || 'Erro ao salvar amamentação');
-            }
+            // Resetar tudo
+            this.seconds = 0;
+            this.updateDisplay();
+            this.mlInput.value = '';
+            this.inputSection.style.display = 'none';
+            this.startButton.disabled = false;
+            this.isFeeding = false;
 
-            this.updateHistory(data.feeding);
-            this.reset();
-            alert('Amamentação registrada com sucesso!');
-            
+            // Atualizar a lista de registros
+            await this.atualizarRegistros();
+
+            alert('Registro salvo com sucesso!');
+
         } catch (error) {
-            console.error('Erro ao salvar amamentação:', error);
-            alert('Erro ao salvar amamentação: ' + error.message);
-            this.reset();
+            console.error('Erro ao salvar registro:', error);
+            alert('Erro ao salvar o registro: ' + error.message);
+        } finally {
+            this.saveButton.disabled = false;
         }
     }
 
-    updateTimer() {
-        const now = new Date();
-        this.duration = Math.floor((now - this.startTime) / 1000 / 60);
-        const timerDisplay = document.getElementById('timer');
-        if (timerDisplay) {
-            const hours = Math.floor(this.duration / 60);
-            const minutes = this.duration % 60;
-            const seconds = Math.floor(((now - this.startTime) / 1000) % 60);
-            timerDisplay.textContent = 
-                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
-    }
+    async atualizarRegistros() {
+        try {
+            console.log('Atualizando registros...');
+            const response = await fetch(`/dashboard/feeding/recent?baby_id=${this.babySelector.value}`);
+            const data = await response.json();
+            console.log('Registros recebidos:', data);
 
-    reset() {
-        this.isFeeding = false;
-        this.startTime = null;
-        this.duration = 0;
-        clearInterval(this.timer);
-        
-        const timerDisplay = document.getElementById('timer');
-        if (timerDisplay) {
-            timerDisplay.style.display = 'none';
-            timerDisplay.textContent = '00:00:00';
-        }
-        
-        const button = document.getElementById('feeding-button');
-        if (button) {
-            button.textContent = 'Iniciar Amamentação';
-            button.classList.remove('btn-danger');
-            button.classList.add('btn-primary');
-        }
-    }
-
-    updateHistory(feeding) {
-        const historyContainer = document.querySelector('#feedingHistory');
-        if (!historyContainer) {
-            console.error('Container do histórico não encontrado');
-            return;
-        }
-
-        const noHistoryMessage = historyContainer.querySelector('.text-muted');
-        if (noHistoryMessage) {
-            noHistoryMessage.remove();
-        }
-
-        const historyItem = document.createElement('div');
-        historyItem.className = 'border rounded-lg p-4 hover:bg-gray-50 transition-colors';
-        
-        const startedAt = new Date(feeding.started_at);
-        const formattedTime = startedAt.toLocaleTimeString('pt-BR', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        const formattedDate = startedAt.toLocaleDateString('pt-BR');
-
-        historyItem.innerHTML = `
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-sm text-gray-600">
-                        ${formattedTime}
-                        - Duração: ${feeding.duration} minutos
-                        ${feeding.quantity ? `- Quantidade: ${feeding.quantity}ml` : ''}
-                    </p>
-                </div>
-                <span class="text-xs text-gray-500">
-                    ${formattedDate}
-                </span>
-            </div>
-        `;
-
-        historyContainer.insertBefore(historyItem, historyContainer.firstChild);
-
-        const allItems = historyContainer.querySelectorAll('.border');
-        if (allItems.length > 3) {
-            for (let i = 3; i < allItems.length; i++) {
-                allItems[i].remove();
+            const recordsContainer = document.getElementById('registros');
+            if (!recordsContainer) {
+                console.error('Container de registros não encontrado');
+                return;
             }
-        }
 
-        if (historyContainer.querySelectorAll('.border').length === 0) {
-            const noHistoryMessage = document.createElement('p');
-            noHistoryMessage.className = 'text-muted text-center';
-            noHistoryMessage.textContent = 'Nenhum registro de amamentação encontrado.';
-            historyContainer.appendChild(noHistoryMessage);
+            recordsContainer.innerHTML = '';
+
+            if (!data.feedings || data.feedings.length === 0) {
+                recordsContainer.innerHTML = '<p class="text-muted text-center">Nenhum registro de amamentação encontrado.</p>';
+                return;
+            }
+
+            data.feedings.forEach(record => {
+                const div = document.createElement('div');
+                div.className = 'registro';
+                
+                const startedAt = new Date(record.started_at);
+                const hours = Math.floor(record.duration / 60);
+                const minutes = record.duration % 60;
+                const duration = hours > 0 ? 
+                    `${hours}h ${minutes}min` : 
+                    `${minutes}min`;
+
+                div.innerHTML = `
+                    <strong>Data:</strong> ${startedAt.toLocaleDateString()} ${startedAt.toLocaleTimeString()}<br>
+                    <strong>Duração:</strong> ${duration}<br>
+                    <strong>Quantidade:</strong> ${record.quantity ? record.quantity + ' mL' : 'não informado'}
+                `;
+                recordsContainer.appendChild(div);
+            });
+        } catch (error) {
+            console.error('Erro ao atualizar registros:', error);
         }
     }
 }
 
 // Inicialização quando o DOM estiver carregado
+console.log('Script feeding-manager.js carregado');
 document.addEventListener('DOMContentLoaded', function() {
-    const feedingManager = new FeedingManager();
-    
-    const feedingButton = document.getElementById('feeding-button');
-    if (feedingButton) {
-        feedingButton.addEventListener('click', () => {
-            if (feedingManager.isFeeding) {
-                feedingManager.stop();
-            } else {
-                feedingManager.start();
-            }
-        });
+    console.log('DOM carregado - Iniciando FeedingManager');
+    if (window.feedingManager) {
+        console.log('FeedingManager já existe, não criando novo');
+        return;
     }
-
-    // Event listeners para os alarmes
-    document.querySelectorAll('.alarm-toggle').forEach(toggle => {
-        toggle.addEventListener('change', async function() {
-            const alarmId = this.dataset.alarmId;
-            try {
-                const response = await fetch(`/dashboard/alarm/${alarmId}/toggle`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
-                });
-                const data = await response.json();
-                if (!data.success) {
-                    throw new Error(data.message);
-                }
-            } catch (error) {
-                alert('Erro ao alterar estado do alarme: ' + error.message);
-                this.checked = !this.checked; // Reverte a mudança em caso de erro
-            }
-        });
-    });
+    window.feedingManager = new FeedingManager();
 }); 

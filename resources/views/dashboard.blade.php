@@ -1,5 +1,78 @@
 @extends('layouts.app')
 
+@section('styles')
+<style>
+    .timer {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #2d3748;
+        margin: 20px 0;
+    }
+    
+    .input-section {
+        background-color: #f8fafc;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+    
+    .registro {
+        background-color: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .registro:hover {
+        background-color: #f8fafc;
+    }
+    
+    .registro strong {
+        color: #4a5568;
+    }
+    
+    #btnStart, #btnStop {
+        min-width: 100px;
+        margin: 0 5px;
+    }
+    
+    #ml {
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+    }
+    
+    #ml:focus {
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    }
+
+    .tip-item {
+        transition: opacity 0.5s ease-in-out;
+        opacity: 0;
+    }
+
+    .tip-item.fade-in {
+        opacity: 1;
+    }
+
+    .tip-item h6 {
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+
+    .tip-item p {
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+    }
+
+    .tip-item small {
+        font-size: 0.8rem;
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -44,31 +117,29 @@
                         <div class="card">
                             <div class="card-header">Amamentação</div>
                             <div class="card-body">
-                                <button id="feeding-button" class="btn btn-primary btn-block mb-3">
-                                    Iniciar Amamentação
-                                </button>
-                                <div id="timer" class="text-center mb-3" style="display: none;">
-                                    <h3>00:00:00</h3>
+                                <div class="timer text-center mb-3" id="timer">00:00</div>
+                                
+                                <div class="text-center mb-3">
+                                    <button id="btnStart" class="btn btn-primary">Iniciar</button>
+                                    <button id="btnStop" class="btn btn-danger" disabled>Parar</button>
                                 </div>
-                                <div class="bg-white rounded-lg shadow p-6">
-                                    <h2 class="text-lg font-semibold mb-4">Histórico de Amamentação</h2>
-                                    <div id="feedingHistory" class="space-y-4">
+
+                                <div class="input-section" id="inputSection" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="ml">Quantidade de leite (mL) <small>(opcional)</small>:</label>
+                                        <input type="number" class="form-control" id="ml" placeholder="Ex: 120">
+                                    </div>
+                                    <button type="button" id="btnSave" class="btn btn-success btn-block mt-2">Salvar Registro</button>
+                                </div>
+
+                                <div class="mt-4">
+                                    <h5>Registros</h5>
+                                    <div id="registros" class="mt-3">
                                         @forelse($feedings as $feeding)
-                                            <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                                                <div class="flex justify-between items-center">
-                                                    <div>
-                                                        <p class="text-sm text-gray-600">
-                                                            {{ \Carbon\Carbon::parse($feeding->started_at)->format('H:i') }}
-                                                            - Duração: {{ $feeding->duration }} minutos
-                                                            @if($feeding->quantity)
-                                                                - Quantidade: {{ $feeding->quantity }}ml
-                                                            @endif
-                                                        </p>
-                                                    </div>
-                                                    <span class="text-xs text-gray-500">
-                                                        {{ \Carbon\Carbon::parse($feeding->started_at)->format('d/m/Y') }}
-                                                    </span>
-                                                </div>
+                                            <div class="registro">
+                                                <strong>Data:</strong> {{ $feeding->started_at->format('d/m/Y H:i') }}<br>
+                                                <strong>Duração:</strong> {{ $feeding->formatted_duration }}<br>
+                                                <strong>Quantidade:</strong> {{ $feeding->quantity ? $feeding->quantity . ' mL' : 'não informado' }}
                                             </div>
                                         @empty
                                             <p class="text-muted text-center">Nenhum registro de amamentação encontrado.</p>
@@ -105,13 +176,12 @@
                         <div class="card">
                             <div class="card-header">Dicas do Dia</div>
                             <div class="card-body">
-                                <div class="tip-item mb-3">
-                                    <h6>Postura Correta</h6>
-                                    <p>Mantenha o bebê com a cabeça alinhada ao corpo e o queixo tocando o seio.</p>
-                                </div>
-                                <div class="tip-item">
-                                    <h6>Hidratação</h6>
-                                    <p>Beba bastante água durante a amamentação para manter a produção de leite.</p>
+                                <div id="tipsContainer">
+                                    <div class="text-center">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Carregando...</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -123,18 +193,8 @@
 </div>
 
 @push('scripts')
-<script src="{{ asset('js/test.js') }}"></script>
 <script src="{{ asset('js/feeding-manager.js') }}"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const babySelector = document.getElementById('baby-selector');
-    if (babySelector) {
-        babySelector.addEventListener('change', function() {
-            window.location.href = `{{ route('dashboard') }}?baby_id=${this.value}`;
-        });
-    }
-});
-</script>
+<script src="{{ asset('js/tips-manager.js') }}"></script>
 @endpush
 
 @endsection
