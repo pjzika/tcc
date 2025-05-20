@@ -6,28 +6,18 @@
         <div class="col-md-6">
             <div class="card mt-5">
                 <div class="card-header text-center">
-                    <h4>Cadastro</h4>
+                    <h4>Redefinir Senha</h4>
                 </div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                    <form method="POST" action="{{ route('password.update') }}">
                         @csrf
-
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nome</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                   id="name" name="name" value="{{ old('name') }}" required autofocus>
-                            @error('name')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+                        <input type="hidden" name="token" value="{{ $token }}">
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                   id="email" name="email" value="{{ old('email') }}" required>
+                                   id="email" name="email" value="{{ $email ?? old('email') }}" required>
                             @error('email')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -36,7 +26,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="password" class="form-label">Senha</label>
+                            <label for="password" class="form-label">Nova Senha</label>
                             <input type="password" class="form-control @error('password') is-invalid @enderror" 
                                    id="password" name="password" required>
                             @error('password')
@@ -47,17 +37,15 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="password_confirmation" class="form-label">Confirmar Senha</label>
+                            <label for="password_confirmation" class="form-label">Confirmar Nova Senha</label>
                             <input type="password" class="form-control" 
                                    id="password_confirmation" name="password_confirmation" required>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Cadastrar</button>
-                        </div>
-
-                        <div class="text-center mt-3">
-                            <p>Já tem uma conta? <a href="{{ route('login') }}">Faça login</a></p>
+                            <button type="submit" class="btn btn-primary">
+                                Redefinir Senha
+                            </button>
                         </div>
                     </form>
                 </div>
