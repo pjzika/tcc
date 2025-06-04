@@ -1,54 +1,62 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row align-items-center min-vh-75 py-5">
-        <div class="col-lg-6">
-            <h1 class="display-4 fw-bold mb-4">Bem-vinda ao MaternArte</h1>
-            <p class="lead mb-4">Um espaço acolhedor e informativo para mães de primeira viagem. Aqui você encontrará apoio, dicas e uma comunidade que entende sua jornada.</p>
-            <div class="d-flex gap-3">
-                <a href="/cadastro" class="btn btn-primary btn-lg">Começar Agora</a>
-                <a href="/sobre" class="btn btn-outline-primary btn-lg">Saiba Mais</a>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                 alt="Mãe e bebê" 
-                 class="img-fluid rounded shadow-lg">
-        </div>
-    </div>
+       
+<!-- Seção de Boas-Vindas (Hero) -->
+<div style="background-color: #E8C7C8; width: 100%; padding: 120px 0;">
+    <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between" style="gap: 100px;">
+        
+        <!-- Texto -->
+        <div class="col-lg-6" style="padding-right: 40px;">
+            <h1 class="fw-bold mb-4" style="font-size: 55px; color: var(--text-color);">
+                Bem-vinda ao <span style="color: #9A434A">MaternArte!</span>
+            </h1>
+            <p class="mb-4" style="font-size: 24px;">
+                Um espaço acolhedor e informativo para mães de primeira viagem.
+                Aqui você encontrará apoio, dicas e uma comunidade que entende sua jornada.
+            </p>
+            <a href="{{ route('register') }}" class="btn-auth btn-register" style="margin-top: 15px; padding: 14px 32px; font-size: 20px;">Começar Agora</a>
 
-    <div class="row py-5">
-        <div class="col-12 text-center mb-5">
-            <h2 class="fw-bold">Como Podemos Ajudar Você?</h2>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body text-center p-4">
-                    <i class="fas fa-book fa-3x mb-3 text-primary"></i>
-                    <h3 class="h5">Guia Completo</h3>
-                    <p class="text-muted">Informações essenciais sobre gravidez, parto e cuidados com o bebê.</p>
-                </div>
-            </div>
+
+        <!-- Imagem -->
+        <div class="col-lg-6 text-center">
+            <img src="{{ asset('images/mae-bebe.png') }}" alt="Mãe e bebê" class="img-fluid"
+                 style="box-shadow: none; max-height: 420px; width: auto;">
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body text-center p-4">
-                    <i class="fas fa-users fa-3x mb-3 text-primary"></i>
-                    <h3 class="h5">Comunidade</h3>
-                    <p class="text-muted">Conecte-se com outras mães e compartilhe experiências.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body text-center p-4">
-                    <i class="fas fa-calendar-alt fa-3x mb-3 text-primary"></i>
-                    <h3 class="h5">Acompanhamento</h3>
-                    <p class="text-muted">Acompanhe o desenvolvimento do seu bebê e suas consultas.</p>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
-@endsection 
+
+
+
+
+    <div style="background-color: #FFFFFF; padding: 80px 0;">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-5" style="color: var(--text-color);">Apoiando sua jornada de <span style="color: var(--primary-color);">amamentação</span></h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="info-box h-100">
+                        <i class="fas fa-lightbulb"></i>
+                        <h5>Dicas</h5>
+                        <p>Obtenha dicas diárias de profissionais para cuidados com seu bebê.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="info-box h-100">
+                        <i class="fas fa-clock"></i>
+                        <h5>Rotina</h5>
+                        <p>Crie e siga uma rotina que irá auxiliar diariamente na amamentação do seu bebê.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="info-box h-100">
+                        <i class="fas fa-smile"></i>
+                        <h5>Acompanhamento</h5>
+                        <p>Informações essenciais sobre gravidez e cuidados com o seu bebê.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
