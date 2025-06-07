@@ -20,12 +20,12 @@
         font-family: 'Poppins', sans-serif;
         background-color: var(--background-color);
         color: var(--text-color);
-        min-height: 100vh;
+        min-height: 100px;
     }
 
     .top-nav {
         background-color: var(--background-color);
-        padding: 15px 60px;
+        padding: 6px 60px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -53,7 +53,7 @@
         color: var(--text-color);
         text-decoration: none;
         font-weight: 500;
-        font-size: 20px;
+        font-size: 18px;
         transition: color 0.3s ease;
     }
 
@@ -101,38 +101,8 @@
         margin-top: 60px;
     }
 
-    .info-box {
-        border: 2px solid var(--primary-color);
-        border-radius: 16px;
-        padding: 32px;
-        background-color: #ffffff;
-        color: var(--text-color);
-        transition: transform 0.3s ease;
-    }
-
-    .info-box:hover {
-        transform: translateY(-4px);
-    }
-
-    .info-box i {
-        font-size: 32px;
-        color: var(--primary-color);
-        margin-bottom: 20px;
-    }
-
-    .info-box h5 {
-        font-weight: 600;
-        font-size: 32px;
-        margin-bottom: 10px;
-    }
-
-    .info-box p {
-        font-size: 20px;
-    }
-
-
-
-    </style>
+ </style>
+ 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');

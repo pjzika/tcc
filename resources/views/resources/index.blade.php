@@ -1,33 +1,44 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Recursos') }}</div>
+    <div class="text-center py-5 bg-white">
+        <h1 style="color: #4a1c1c; font-weight: 700; font-size: 3rem;">Recursos</h1>
+        <p class="mt-3" style="font-size: 1.1rem;">
+           Esta seção disponibiliza recursos e instruções que facilitam o uso do sistema </br>
+           e apoiam sua experiência de navegação.
+        </p>
+    </div>
 
-                <div class="card-body">
-                    <h2>Recursos Disponíveis</h2>
-                    <p>Esta é a página de recursos do sistema. Aqui você encontrará informações úteis e ferramentas para ajudar no seu trabalho.</p>
-                    
-                    <div class="list-group">
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <h5 class="mb-1">Documentação</h5>
-                            <p class="mb-1">Acesse a documentação completa do sistema.</p>
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <h5 class="mb-1">Tutoriais</h5>
-                            <p class="mb-1">Aprenda a usar o sistema com nossos tutoriais passo a passo.</p>
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <h5 class="mb-1">Suporte</h5>
-                            <p class="mb-1">Entre em contato com nossa equipe de suporte.</p>
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <div class="bg-pink d-flex justify-content-center align-items-center">
+        <div class="d-flex flex-column flex-md-row gap-4 justify-content-center align-items-center">
+            <a href="#" class="d-block text-center text-decoration-none p-4 resource-btm"
+               style="background-color: #f7eded; border-radius: 16px; width: 300px; font-size: 20px; font-weight: 500; color: black;">
+                Documentação
+            </a>
+            <a href="#" class="d-block text-center text-decoration-none p-4 resource-btm"
+               style="background-color: #f7eded; border-radius: 16px; width: 300px; font-size: 20px; font-weight: 500; color: black;">
+                Suporte
+            </a>
         </div>
     </div>
-</div>
-@endsection 
+
+    <style>
+        .bg-pink {
+            background-color: #E8C7C8;
+            min-height: 270px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .resource-btm {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .resource-btm:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+@endsection
