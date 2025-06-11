@@ -1,4 +1,4 @@
-@extends('layouts.app') {{-- Mantém sua navbar --}}
+@extends('layouts.app')
 
 @section('content')
 
@@ -24,13 +24,18 @@
                        style="width: 100%; height: 42px; padding: 10px 15px;
                               border: none; border-radius: 10px; background-color: #f2f2f2; font-size: 15px;">
             </div>
-            <div style="margin-bottom: 25px;">
-                <label for="password" style="display: block; font-size: 15px; margin-bottom: 8px; color: #333;">
+            <div style="margin-bottom: 2px;">
+                <label for="password" style="display: block; font-size: 15px; margin-bottom: 2px; color: #333;">
                     Senha:
                 </label>
                 <input id="password" type="password" name="password" required
                        style="width: 100%; height: 42px; padding: 10px 15px;
                               border: none; border-radius: 10px; background-color: #f2f2f2; font-size: 15px;">
+            </div>
+            <div style="text-align: center; margin-top: 2px; margin-bottom: 20px;">
+                <a href="{{ route('password.request') }}" style="font-size: 14px; color: #5a1e1e; text-decoration: underline;">
+                Esqueceu sua senha?
+                </a>
             </div>
             <div style="text-align: center;">
                 <button type="submit"

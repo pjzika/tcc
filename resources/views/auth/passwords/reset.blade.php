@@ -53,4 +53,59 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection
+
+@section('styles')
+<style>
+    .card {
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 1rem;
+    }
+
+    .card-header h4 {
+        margin: 0;
+        color: #4a1c1c;
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
+
+    .form-label {
+        color: #4a5568;
+        font-weight: 500;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #d48c8c;
+        box-shadow: 0 0 0 3px rgba(212, 140, 140, 0.3);
+    }
+
+    .btn-primary {
+        background-color: #d48c8c;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .btn-primary:hover {
+        background-color: #c47c7c;
+    }
+
+    .invalid-feedback {
+        color: #e53e3e;
+        font-size: 0.875rem;
+    }
+</style>
+@endsection
