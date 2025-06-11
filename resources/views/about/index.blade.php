@@ -1,29 +1,38 @@
-@extends('layouts.app')
+@extends('layouts.app') {{-- Usa seu layout padrão com a navbar --}}
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Sobre Nós') }}</div>
 
-                <div class="card-body">
-                    <h2>Quem Somos</h2>
-                    <p>Somos uma equipe dedicada a fornecer soluções inovadoras para nossos clientes. Nossa missão é tornar a tecnologia acessível e útil para todos.</p>
-                    
-                    <h3>Nossa História</h3>
-                    <p>Fundada em 2024, nossa empresa nasceu da necessidade de simplificar processos complexos através da tecnologia. Ao longo dos anos, temos ajudado inúmeras empresas a alcançar seus objetivos.</p>
-                    
-                    <h3>Nossos Valores</h3>
-                    <ul>
-                        <li>Inovação constante</li>
-                        <li>Compromisso com a qualidade</li>
-                        <li>Foco no cliente</li>
-                        <li>Transparência em todas as ações</li>
-                    </ul>
-                </div>
+    <div style="text-align: center; padding: 60px 20px;">
+        <h1 style="font-size: 40px; color: #4a0f0f; margin-bottom: 20px;">Sobre Nós</h1>
+        <p style="font-size: 18px; max-width: 900px; margin: 0 auto; color: #333;">
+            Somos uma equipe dedicada a fornecer soluções inovadoras para nossos clientes.<br>
+            Nossa missão é tornar a tecnologia acessível e útil para todos.
+        </p>
+    </div>
+    <div style="background-color: #e8c2c2; padding: 60px 0;">
+        <h2 style="text-align: center; font-size: 36px; color: #4a0f0f; margin-bottom: 40px;">Nossos valores</h2>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; max-width: 1000px; margin: 0 auto; gap: 30px;">
+            <div style="width: 420px; height: 100px; background-color: #f8eaea; border-radius: 16px;
+                        display: flex; align-items: center; padding: 0 25px;">
+                <img src="{{ asset('icons/idea.png') }}" alt="Inovação" style="width: 24px; height: 24px; margin-right: 15px;">
+                <span style="font-size: 16px; color: #000;">Inovação constante</span>
+            </div>
+            <div style="width: 420px; height: 100px; background-color: #f8eaea; border-radius: 16px;
+                        display: flex; align-items: center; padding: 0 25px;">
+                <img src="{{ asset('icons/user.png') }}" alt="Foco no cliente" style="width: 24px; height: 24px; margin-right: 15px;">
+                <span style="font-size: 16px; color: #000;">Foco no cliente</span>
+            </div>
+            <div style="width: 420px; height: 100px; background-color: #f8eaea; border-radius: 16px;
+                        display: flex; align-items: center; padding: 0 25px;">
+                <img src="{{ asset('icons/info.png') }}" alt="Informações verídicas" style="width: 24px; height: 24px; margin-right: 15px;">
+                <span style="font-size: 16px; color: #000;">Informações verídicas</span>
+            </div>
+            <div style="width: 420px; height: 100px; background-color: #f8eaea; border-radius: 16px;
+                        display: flex; align-items: center; padding: 0 25px;">
+                <img src="{{ asset('icons/check.png') }}" alt="Compromisso com a Qualidade" style="width: 24px; height: 24px; margin-right: 15px;">
+                <span style="font-size: 16px; color: #000;">Compromisso com a Qualidade</span>
             </div>
         </div>
     </div>
-</div>
-@endsection 
+
+@endsection
