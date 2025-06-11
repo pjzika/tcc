@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\TipsController;
+use Illuminate\Support\Facades\Storage;
 
 // Rotas públicas
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -77,5 +78,40 @@ Route::middleware('auth')->group(function () {
         // Notificações
         Route::post('/notifications/subscribe', [NotificationController::class, 'subscribe'])->name('notifications.subscribe');
         Route::post('/notifications/send', [NotificationController::class, 'sendNotification'])->name('notifications.send');
+
+        // perfil
+        Route::middleware('auth')->get('/profile', function () {
+            return view('profile', ['user' => auth()->user()]);
+        })->name('profile');
+
+        // editar perfil
+        
+        Route::middleware('auth')->get('/profile/edit', function () {
+            $user = auth()->user();
+            return view('profile_edit', compact('user'));
+        })->name('profile.edit');
+        
+        Route::middleware('auth')->post('/profile/edit', function (Request $request) {
+            $user = auth()->user();
+        
+            $data = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'profile_photo' => 'nullable|image|max:2048',
+            ]);
+        
+            if ($request->hasFile('profile_photo')) {
+                if ($user->profile_photo) {
+                    \Storage::delete('public/profile_photos/' . $user->profile_photo);
+                }
+        
+                $filename = $request->file('profile_photo')->store('profile_photos', 'public');
+                $data['profile_photo'] = basename($filename);
+            }
+        
+            $user->update($data);
+        
+            return redirect()->route('profile')->with('success', 'Perfil atualizado com sucesso!');
+        });  
     });
 });
