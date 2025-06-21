@@ -8,11 +8,12 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\NotificationController;
+use App\Jobs\SendAlarmNotification;
 
 class CheckAlarms extends Command
 {
     protected $signature = 'alarms:check';
-    protected $description = 'Verifica os alarmes e envia notificações para os que estão próximos de disparar';
+    protected $description = 'Verifica os alarmes e envia notificações para os que devem disparar agora';
 
     public function handle()
     {
@@ -20,30 +21,30 @@ class CheckAlarms extends Command
         $currentTime = $now->format('H:i');
         $currentDay = strtolower($now->format('l')); // dia da semana atual
         
-        // Buscar alarmes ativos que estão próximos de disparar (dentro dos próximos 5 minutos)
+        // Buscar alarmes ativos que devem disparar agora
         $alarms = Alarm::where('is_active', true)
-            ->where(function($query) use ($currentTime, $currentDay) {
+            ->where('time', $currentTime)
+            ->where(function($query) use ($currentDay) {
                 $query->where('day_of_week', 'all')
                     ->orWhere('day_of_week', $currentDay);
             })
+            ->with('baby.user')
             ->get();
         
-        $notificationController = new NotificationController();
+        $this->info("Verificando alarmes para {$currentTime} - {$currentDay}");
+        $this->info("Encontrados " . $alarms->count() . " alarmes ativos");
         
         foreach ($alarms as $alarm) {
-            $alarmTime = Carbon::createFromFormat('H:i', $alarm->time);
-            $timeDiff = $now->diffInMinutes($alarmTime, false);
+            $user = $alarm->baby->user;
             
-            // Se o alarme está próximo de disparar (dentro dos próximos 5 minutos)
-            if ($timeDiff >= 0 && $timeDiff <= 5) {
-                $user = $alarm->baby->user;
-                $subscription = json_decode($user->push_subscription, true);
+            // Verificar se o usuário tem subscription para push notification
+            if ($user->push_subscription) {
+                $this->info("Enviando notificação para usuário {$user->name} - Alarme {$alarm->time}");
                 
-                if ($subscription) {
-                    $notificationController->sendNotification(new Request([
-                        'message' => "Hora da amamentação em {$timeDiff} minutos! ({$alarm->time})"
-                    ]));
-                }
+                // Enviar notificação via job para não bloquear o comando
+                SendAlarmNotification::dispatch($user, $alarm);
+            } else {
+                $this->warn("Usuário {$user->name} não tem subscription para push notification");
             }
         }
         
