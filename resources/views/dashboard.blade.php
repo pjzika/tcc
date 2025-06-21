@@ -78,21 +78,14 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             @if($babies->isEmpty())
-                <div class="card">
-                    <div class="card-header">Registrar Novo Bebê</div>
+                <div class="card text-center">
+                    <div class="card-header">Bem-vindo(a)!</div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('baby.store') }}">
-                            @csrf
-                            <div class="form-group">
-                                <label for="name">Nome do Bebê</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="birth_date">Data de Nascimento</label>
-                                <input type="date" class="form-control" id="birth_date" name="birth_date" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Registrar</button>
-                        </form>
+                        <h5 class="card-title">Nenhum bebê registrado</h5>
+                        <p class="card-text">Para começar a usar o dashboard, por favor, registre seu primeiro bebê.</p>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBabyModal">
+                            Registrar Bebê
+                        </button>
                     </div>
                 </div>
             @else
@@ -100,13 +93,18 @@
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Dashboard</h5>
-                            <select class="form-control w-auto" id="baby-selector">
-                                @foreach($babies as $b)
-                                    <option value="{{ $b->id }}" {{ $b->id === $baby->id ? 'selected' : '' }}>
-                                        {{ $b->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="d-flex align-items-center">
+                                <select class="form-control w-auto me-2" id="baby-selector">
+                                    @foreach($babies as $b)
+                                        <option value="{{ $b->id }}" {{ $b->id === $baby->id ? 'selected' : '' }}>
+                                            {{ $b->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addBabyModal">
+                                    <i class="fas fa-plus"></i> Adicionar Bebê
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -153,23 +151,34 @@
                     <!-- Coluna de Alarmes -->
                     <div class="col-md-4">
                         <div class="card">
-                            <div class="card-header">Alarmes</div>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Alarmes</span>
+                                {{-- Futuro botão de adicionar alarme --}}
+                            </div>
                             <div class="card-body">
-                                @foreach($alarms as $alarm)
+                                @forelse($alarms as $alarm)
                                     <div class="alarm-item d-flex justify-content-between align-items-center mb-2">
-                                        <span>{{ $alarm->formatted_time }} - {{ $alarm->day_name }}</span>
-                                        <div class="custom-control custom-switch">
-                                            <input type="checkbox" class="custom-control-input alarm-toggle" 
-                                                id="alarm-{{ $alarm->id }}" 
-                                                data-alarm-id="{{ $alarm->id }}"
-                                                {{ $alarm->is_active ? 'checked' : '' }}>
-                                            <label class="custom-control-label" for="alarm-{{ $alarm->id }}"></label>
+                                        <span class="alarm-time">{{ $alarm->formatted_time }}</span>
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-secondary me-2 edit-alarm-btn" data-bs-toggle="modal" data-bs-target="#editAlarmModal" data-alarm-id="{{ $alarm->id }}" data-alarm-time="{{ $alarm->time }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <div class="custom-control custom-switch d-inline-block">
+                                                <input type="checkbox" class="custom-control-input alarm-toggle" 
+                                                    id="alarm-{{ $alarm->id }}" 
+                                                    data-alarm-id="{{ $alarm->id }}"
+                                                    {{ $alarm->is_active ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="alarm-{{ $alarm->id }}"></label>
+                                            </div>
                                         </div>
                                     </div>
-                                @endforeach
+                                @empty
+                                    <p class="text-muted text-center">Nenhum alarme configurado.</p>
+                                @endforelse
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Coluna de Dicas -->
                     <div class="col-md-4">
@@ -192,9 +201,75 @@
     </div>
 </div>
 
+<!-- Modal Adicionar Bebê -->
+<div class="modal fade" id="addBabyModal" tabindex="-1" aria-labelledby="addBabyModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addBabyModalLabel">Registrar Novo Bebê</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ route('baby.store') }}">
+          @csrf
+          <div class="modal-body">
+              <div class="mb-3">
+                  <label for="name" class="form-label">Nome do Bebê</label>
+                  <input type="text" class="form-control" id="name" name="name" required>
+              </div>
+              <div class="mb-3">
+                  <label for="birth_date" class="form-label">Data de Nascimento</label>
+                  <input type="date" class="form-control" id="birth_date" name="birth_date" required>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Registrar</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar Alarme -->
+<div class="modal fade" id="editAlarmModal" tabindex="-1" aria-labelledby="editAlarmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editAlarmModalLabel">Editar Alarme</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="editAlarmForm">
+          <div class="modal-body">
+              <input type="hidden" id="editAlarmId" name="alarm_id">
+              <div class="mb-3">
+                  <label for="editAlarmTime" class="form-label">Novo Horário</label>
+                  <input type="time" class="form-control" id="editAlarmTime" name="time" required>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 @push('scripts')
 <script src="{{ asset('js/feeding-manager.js') }}"></script>
 <script src="{{ asset('js/tips-manager.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const babySelector = document.getElementById('baby-selector');
+        if (babySelector) {
+            babySelector.addEventListener('change', function() {
+                const babyId = this.value;
+                window.location.href = `{{ route('dashboard') }}?baby_id=${babyId}`;
+            });
+        }
+    });
+</script>
 @endpush
 
 @endsection

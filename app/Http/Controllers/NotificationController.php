@@ -89,4 +89,36 @@ class NotificationController extends Controller
             return response()->json(['error' => 'Error sending notification: ' . $e->getMessage()], 500);
         }
     }
+
+    public function checkAlarmNotifications(Request $request)
+    {
+        try {
+            /** @var User $user */
+            $user = Auth::user();
+            
+            // Buscar notificações de alarme não lidas dos últimos 5 minutos
+            $notifications = $user->notifications()
+                ->where('type', 'App\Notifications\FeedingAlarmNotification')
+                ->where('created_at', '>=', now()->subMinutes(5))
+                ->whereNull('read_at')
+                ->orderBy('created_at', 'desc')
+                ->get(['id', 'data', 'created_at']);
+            
+            return response()->json([
+                'success' => true,
+                'notifications' => $notifications
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Erro ao verificar notificações de alarme', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao verificar notificações'
+            ], 500);
+        }
+    }
 } 

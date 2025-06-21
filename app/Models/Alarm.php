@@ -17,7 +17,6 @@ class Alarm extends Model
     ];
 
     protected $casts = [
-        'time' => 'datetime',
         'is_active' => 'boolean'
     ];
 
@@ -41,7 +40,10 @@ class Alarm extends Model
     // Método para formatar o horário para exibição
     public function getFormattedTimeAttribute()
     {
-        return $this->time->format('H:i');
+        if (!$this->time) {
+            return '00:00';
+        }
+        return \Carbon\Carbon::parse($this->time)->format('H:i');
     }
 
     // Método para obter o nome do dia da semana

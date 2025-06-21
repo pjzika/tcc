@@ -68,6 +68,7 @@ Route::middleware('auth')->group(function () {
         
         // Alarms
         Route::post('/dashboard/alarm/{alarmId}/toggle', [DashboardController::class, 'toggleAlarm'])->name('alarm.toggle');
+        Route::post('/dashboard/alarm/{alarm}/update', [DashboardController::class, 'updateAlarm'])->name('alarm.update');
         
         // Baby
         Route::post('/dashboard/baby', [DashboardController::class, 'storeBaby'])->name('baby.store');

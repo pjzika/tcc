@@ -16,9 +16,12 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\NotificationController;
 use Closure;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class DashboardController extends Controller
 {
+    use AuthorizesRequests;
+
     protected $notificationController;
 
     public function __construct(NotificationController $notificationController)
@@ -169,14 +172,36 @@ class DashboardController extends Controller
     public function toggleAlarm(Request $request, $alarmId)
     {
         try {
-            Log::info('Tentando alternar estado do alarme', ['alarm_id' => $alarmId]);
+            Log::info('=== INÍCIO DO TOGGLE ALARME ===');
+            Log::info('Request recebida:', $request->all());
+            Log::info('Alarm ID:', ['alarm_id' => $alarmId]);
+            Log::info('User ID:', ['user_id' => Auth::id()]);
+
+            $validated = $request->validate([
+                'is_active' => 'required|boolean',
+            ]);
+
+            Log::info('Dados validados:', $validated);
 
             $alarm = Alarm::whereHas('baby', function($query) {
                 $query->where('user_id', Auth::id());
             })->findOrFail($alarmId);
 
-            $alarm->is_active = !$alarm->is_active;
-            $alarm->save();
+            Log::info('Alarme encontrado:', [
+                'id' => $alarm->id,
+                'time' => $alarm->time,
+                'is_active_anterior' => $alarm->is_active,
+                'baby_id' => $alarm->baby_id
+            ]);
+
+            $alarm->is_active = $validated['is_active'];
+            $resultado = $alarm->save();
+
+            Log::info('Resultado do save():', ['resultado' => $resultado]);
+            Log::info('Estado após save:', [
+                'is_active' => $alarm->is_active,
+                'updated_at' => $alarm->updated_at
+            ]);
 
             Log::info('Estado do alarme alterado com sucesso', [
                 'alarm_id' => $alarmId,
@@ -193,6 +218,8 @@ class DashboardController extends Controller
                     ]));
                 }
             }
+
+            Log::info('=== FIM DO TOGGLE ALARME ===');
 
             return response()->json([
                 'success' => true,
@@ -252,12 +279,12 @@ class DashboardController extends Controller
 
             // Criar alarmes padrão para o bebê
             $defaultAlarms = [
-                ['time' => '06:00', 'day_of_week' => 'all'],
-                ['time' => '09:00', 'day_of_week' => 'all'],
-                ['time' => '12:00', 'day_of_week' => 'all'],
-                ['time' => '15:00', 'day_of_week' => 'all'],
-                ['time' => '18:00', 'day_of_week' => 'all'],
-                ['time' => '21:00', 'day_of_week' => 'all'],
+                ['time' => '06:00', 'day_of_week' => 'all', 'is_active' => false],
+                ['time' => '09:00', 'day_of_week' => 'all', 'is_active' => false],
+                ['time' => '12:00', 'day_of_week' => 'all', 'is_active' => false],
+                ['time' => '15:00', 'day_of_week' => 'all', 'is_active' => false],
+                ['time' => '18:00', 'day_of_week' => 'all', 'is_active' => false],
+                ['time' => '21:00', 'day_of_week' => 'all', 'is_active' => false],
             ];
 
             foreach ($defaultAlarms as $alarm) {
@@ -338,6 +365,76 @@ class DashboardController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Erro ao buscar registros recentes'
+            ], 500);
+        }
+    }
+
+    public function updateAlarm(Request $request, Alarm $alarm)
+    {
+        try {
+            // Garante que o alarme pertence a um bebê do usuário autenticado
+            $this->authorize('update', $alarm);
+
+            $validated = $request->validate([
+                'time' => 'required|date_format:H:i',
+            ]);
+
+            $alarm->update([
+                'time' => $validated['time'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Alarme atualizado com sucesso!',
+                'alarm' => $alarm,
+            ]);
+
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            return response()->json(['success' => false, 'message' => 'Ação não autorizada.'], 403);
+        } catch (\Exception $e) {
+            Log::error('Erro ao atualizar alarme', [
+                'alarm_id' => $alarm->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['success' => false, 'message' => 'Erro ao atualizar o alarme.'], 500);
+        }
+    }
+
+    public function getActiveAlarms(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            
+            $alarms = Alarm::whereHas('baby', function($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->where('is_active', true)
+            ->with('baby:id,name')
+            ->get(['id', 'time', 'day_of_week', 'is_active', 'baby_id'])
+            ->map(function($alarm) {
+                return [
+                    'id' => $alarm->id,
+                    'time' => $alarm->time,
+                    'day_of_week' => $alarm->day_of_week,
+                    'is_active' => $alarm->is_active,
+                    'baby_name' => $alarm->baby->name
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'alarms' => $alarms
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar alarmes ativos', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao buscar alarmes'
             ], 500);
         }
     }
