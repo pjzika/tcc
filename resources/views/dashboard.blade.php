@@ -74,20 +74,29 @@
 @endsection
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            @if($babies->isEmpty())
-                <div class="card text-center">
-                    <div class="card-header">Bem-vindo(a)!</div>
-                    <div class="card-body">
-                        <h5 class="card-title">Nenhum bebê registrado</h5>
-                        <p class="card-text">Para começar a usar o dashboard, por favor, registre seu primeiro bebê.</p>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBabyModal">
+<div class="container-fluid px-0" style="background-color: #e8c2c2; min-height: 100vh; padding-top: 60px;">
+
+    @if($babies->isEmpty())
+            <div class="d-flex justify-content-center align-items-start">
+                <div style="max-width: 420px; width: 100%; background-color: #ffffff;
+                            padding: 40px 40px 30px; border-radius: 20px;
+                            box-shadow: 0px 5px 10px rgba(171, 157, 157, 0.08);">
+                    <h2 style="font-size: 28px; color: #6b1f1f; font-weight: bold; text-align: center; margin-bottom: 10px;">
+                        Bem-vindo(a)!
+                    </h2>
+                    <p style="font-size: 15px; color: #000; text-align: center; margin-bottom: 30px;">
+                        Para começar a usar o dashboard, por favor, registre seu primeiro bebê.
+                    </p>
+                    <div style="text-align: center;">
+                        <button type="button" class="btn-register"
+                                data-bs-toggle="modal" data-bs-target="#addBabyModal" 
+                                style="background-color: #a33c3c; color: #fff; border: none;
+                               border-radius: 10px; font-size: 18px; padding: 10px 40px; cursor: pointer;">
                             Registrar Bebê
                         </button>
                     </div>
                 </div>
+                
             @else
                 <div class="card mb-4">
                     <div class="card-header">
@@ -233,7 +242,7 @@
 <!-- Modal Editar Alarme -->
 <div class="modal fade" id="editAlarmModal" tabindex="-1" aria-labelledby="editAlarmModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content"> 
       <div class="modal-header">
         <h5 class="modal-title" id="editAlarmModalLabel">Editar Alarme</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -268,7 +277,7 @@
                 window.location.href = `{{ route('dashboard') }}?baby_id=${babyId}`;
             });
         }
-    });
+    }); 
 </script>
 @endpush
 

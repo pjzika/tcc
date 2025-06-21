@@ -110,10 +110,7 @@
             background-color: var(--secondary-color);
             color: var(--text-color);
         }
-        /* Conteúdo */
-        .main-content {
-            padding: 2rem;
-        }
+    
         /* Footer */
         footer {
             text-align: center;
