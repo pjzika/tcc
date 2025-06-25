@@ -94,24 +94,42 @@ Route::middleware('auth')->group(function () {
         
         Route::middleware('auth')->post('/profile/edit', function (Request $request) {
             $user = auth()->user();
-        
+
             $data = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',
                 'profile_photo' => 'nullable|image|max:2048',
+                'current_password' => 'nullable|string',
+                'password' => 'nullable|string|min:8|confirmed',
             ]);
-        
+
+            // Atualizar nome normalmente
+            $user->name = $data['name'];
+
+            // Atualizar email somente se mudou
+            if ($request->email !== $user->email) {
+                if (empty($data['current_password']) || !\Hash::check($data['current_password'], $user->password)) {
+                    return back()->withErrors(['current_password' => 'A senha atual está incorreta para alterar o email.'])->withInput();
+                }
+                $user->email = $data['email'];
+            }
+
+            // Atualizar senha se informada
+            if (!empty($data['password'])) {
+                $user->password = \Hash::make($data['password']);
+            }
+
+            // Atualizar foto de perfil
             if ($request->hasFile('profile_photo')) {
                 if ($user->profile_photo) {
                     \Storage::delete('public/profile_photos/' . $user->profile_photo);
                 }
-        
                 $filename = $request->file('profile_photo')->store('profile_photos', 'public');
-                $data['profile_photo'] = basename($filename);
+                $user->profile_photo = basename($filename);
             }
-        
-            $user->update($data);
-        
+
+            $user->save();
+
             return redirect()->route('profile')->with('success', 'Perfil atualizado com sucesso!');
         });  
     });

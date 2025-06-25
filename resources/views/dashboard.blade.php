@@ -153,6 +153,9 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <span>Alarmes</span>
+                                <button id="test-alarm-btn" class="btn btn-warning btn-sm ms-2" type="button">
+                                    <i class="fas fa-bell"></i> Testar Alarme
+                                </button>
                                 {{-- Futuro botão de adicionar alarme --}}
                             </div>
                             <div class="card-body">

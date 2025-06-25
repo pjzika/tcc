@@ -23,6 +23,27 @@
                 @error('email') <div class="text-danger">{{ $message }}</div> @enderror
             </div>
 
+            <!-- Senha atual (obrigatório para mudar email) -->
+            <div class="form-group">
+                <label for="current_password">Senha atual <span class="text-muted" style="font-size:0.9em;">(necessária para mudar o email)</span></label>
+                <input type="password" name="current_password" id="current_password" class="form-control" autocomplete="current-password">
+                @error('current_password') <div class="text-danger">{{ $message }}</div> @enderror
+            </div>
+
+            <!-- Nova senha (opcional) -->
+            <div class="form-group">
+                <label for="password">Nova senha <span class="text-muted" style="font-size:0.9em;">(deixe em branco para não alterar)</span></label>
+                <input type="password" name="password" id="password" class="form-control" autocomplete="new-password">
+                @error('password') <div class="text-danger">{{ $message }}</div> @enderror
+            </div>
+
+            <!-- Confirmação da nova senha (opcional) -->
+            <div class="form-group">
+                <label for="password_confirmation">Confirmar nova senha</label>
+                <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" autocomplete="new-password">
+                @error('password_confirmation') <div class="text-danger">{{ $message }}</div> @enderror
+            </div>
+
             <!-- Foto de Perfil -->
             <div class="form-group">
                 <label>Foto de Perfil</label><br>

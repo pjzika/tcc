@@ -315,6 +315,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Inicializar gerenciador de notificações de alarme
     alarmNotificationManager = new AlarmNotificationManager();
+    window.alarmNotificationManager = alarmNotificationManager;
     
+    // Botão de teste de alarme
+    const testAlarmBtn = document.getElementById('test-alarm-btn');
+    if (testAlarmBtn) {
+        testAlarmBtn.addEventListener('click', function() {
+            const fakeAlarm = {
+                is_active: true,
+                time: 'TESTE',
+                day_of_week: 'all',
+                baby_name: 'Bebê de Teste'
+            };
+            alarmNotificationManager.triggerAlarm(fakeAlarm);
+        });
+    }
     // ... existing code ...
 });
