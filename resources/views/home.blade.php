@@ -3,19 +3,18 @@
 @section('content')
        
 
-<div style="background-color: #E8C7C8; width: 100%; padding: 120px;">
-    <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between" style="gap: 100px;">
-       
+<div style="background-color: #E8C7C8; width: 100%;" class="py-5 px-3 px-md-5">
+    <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between gap-5 gap-lg-5">
+
         <div class="col-lg-6" style="padding-right: 40px;">
-            <h1 class="fw-bold mb-4" style="font-size: 55px; color: var(--text-color);">
+            <h1 class="fw-bold mb-4 display-5 display-md-4" style="color: var(--text-color);">
                 Bem-vinda ao <span style="color: #9A434A">MaternArte!</span>
             </h1>
             <p class="mb-4" style="font-size: 24px;">
                 Um espaço acolhedor e informativo para mães de primeira viagem.
                 Aqui você encontrará apoio, dicas e uma comunidade que entende sua jornada.
             </p>
-            <a href="{{ route('register') }}" class="btn-auth btn-register" style="padding: 14px 32px; font-size: 20px;">Começar Agora</a>
-
+            <a href="{{ route('register') }}" class="btn-auth btn-register w-100 w-md-auto" style="padding: 14px 32px; font-size: 20px;">Começar Agora</a>
         </div>
 
             <div class="col-lg-6 text-center">
@@ -27,14 +26,14 @@
     </div>
 
 </div>
-    <div style="background-color: #FFFFFF; padding: 80px 0;">
+    <div style="background-color: #FFFFFF;" class="py-5 py-md-5 px-3">
         <div class="container text-center">
-            <h2 class="fw-bold mb-5" style="font-size: 50px; color: var(--text-color);">Apoiando sua jornada de <span style="color: var(--primary-color);">amamentação</span></h2>
+            <h2 class="fw-bold mb-5 display-6 display-md-4" style="color: var(--text-color);">Apoiando sua jornada de <span style="color: var(--primary-color);">amamentação</span></h2>
             <div class="row">
                 <div class="col-md-4 mb-4">
                     <div class="info-box h-100">
                         <i class="fas fa-lightbulb"></i>
-                        <h5>Dicas</h5>
+                        <h5>Dicas</h5>  
                         <p>Obtenha dicas diárias de profissionais para cuidados com seu bebê.</p>
                     </div>
                 </div>

@@ -21,6 +21,13 @@
             color: var(--text-color);
             min-height: 100vh;
         }
+
+        .main-content {
+
+            width: 100%;
+            box-sizing: border-box;
+        }
+
         /* Navegação Superior */
         .top-nav {
             background-color: var(--background-color);
@@ -111,6 +118,7 @@
             color: var(--text-color);
         }
     
+
         /* Footer */
         footer {
             text-align: center;
@@ -121,6 +129,9 @@
             margin-top: auto;
         }
     </style>
+
+        @yield('styles')
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -135,57 +146,57 @@
     </script>
 </head>
 <body>
-    <nav class="top-nav">
-        <a href="/" class="logo-container">
+    <nav class="top-nav navbar navbar-expand-lg">
+        <a href="/" class="logo-container navbar-brand">
             <img src="{{ asset('images/logo-maternarte.png') }}" alt="MaternArte Logo">
         </a>
 
-        <div class="nav-items">
-            {{-- Só mostrar "Início" se o usuário não estiver logado --}}
-            @guest
-                <a href="/" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
-                    <i class="fas fa-home"></i> Início
-                </a>
-            @endguest
+        <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" style="border: none;">
+            <i class="fas fa-bars" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+        </button>
 
-            {{-- Mostrar Dashboard quando logado --}}
-            @auth
-                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->is('dashboard*') ? 'active' : '' }}">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-            @endauth
+        <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+            <div class="nav-items d-flex flex-column flex-lg-row gap-3 gap-lg-4 align-items-start align-items-lg-center mt-3 mt-lg-0">
+                @guest
+                    <a href="/" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
+                        <i class="fas fa-home"></i> Início
+                    </a>
+                @endguest
 
-            <a href="/sobre" class="nav-link {{ request()->is('sobre*') ? 'active' : '' }}">Sobre</a>
-            <a href="/recursos" class="nav-link {{ request()->is('recursos*') ? 'active' : '' }}">Recursos</a>
+                @auth
+                    <a href="{{ route('dashboard') }}" class="nav-link {{ request()->is('dashboard*') ? 'active' : '' }}">
+                        Dashboard
+                    </a>
+                @endauth
 
-            {{-- Só mostrar "Perfil" se estiver logado --}}
-            @auth
-    <a href="{{ route('profile') }}" class="nav-link avatar-link" style="padding: 0 10px;">
-        @if (auth()->user()->profile_photo)
-            <img src="{{ asset('storage/profile_photos/' . auth()->user()->profile_photo) }}" 
-                 alt="Perfil" 
-                 class="avatar-img">
-        @else
-            <i class="fas fa-user-circle fa-2x"></i>
-        @endif
-    </a>
-@endauth
+                <a href="/sobre" class="nav-link {{ request()->is('sobre*') ? 'active' : '' }}">Sobre</a>
+                <a href="/recursos" class="nav-link {{ request()->is('recursos*') ? 'active' : '' }}">Recursos</a>
 
-            {{-- Botão Sair / Login / Registrar --}}
-            @auth
-                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="btn-sair" style="border: none; background: none; cursor: pointer; padding: 0;">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Sair</span>
-                    </button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="btn-auth btn-login">Login</a>
-                <a href="{{ route('register') }}" class="btn-auth btn-register">Registrar</a>
-            @endauth
+                @auth
+                    <a href="{{ route('profile') }}" class="nav-link avatar-link">
+                        @if (auth()->user()->profile_photo)
+                            <img src="{{ asset('storage/profile_photos/' . auth()->user()->profile_photo) }}" 
+                                alt="Perfil" class="avatar-img">
+                        @else
+                            <i class="fas fa-user-circle fa-2x"></i>
+                        @endif
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn-sair" style="border: none; background: none; cursor: pointer; padding: 0;">
+                            <i class="fas fa-sign-out-alt"></i> <span>Sair</span>
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="btn-auth btn-login">Login</a>
+                    <a href="{{ route('register') }}" class="btn-auth btn-register">Registrar</a>
+                @endauth
+            </div>
         </div>
-    </nav>
+    </div>
+</nav>
+
 
 
     <!-- Outros links comuns -->
