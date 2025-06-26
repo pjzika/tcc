@@ -171,7 +171,6 @@
                 @endauth
 
                 <a href="/sobre" class="nav-link {{ request()->is('sobre*') ? 'active' : '' }}">Sobre</a>
-                <a href="/recursos" class="nav-link {{ request()->is('recursos*') ? 'active' : '' }}">Recursos</a>
 
                 @auth
                     <a href="{{ route('profile') }}" class="nav-link avatar-link">

@@ -105,30 +105,32 @@
 @endsection
 
 @section('content')
-<div class="profile-container">
-    <h2 class="profile-title">Editar Perfil</h2>
+<div style="background-color: #e8c2c2; min-height: 100vh; padding: 60px 20px;">
+    <div class="profile-container">
+        <h2 class="profile-title">Editar Perfil</h2>
 
-    <form method="POST" action="{{ route('profile.edit') }}" enctype="multipart/form-data">
-        @csrf
+        <form method="POST" action="{{ route('profile.edit') }}" enctype="multipart/form-data">
+            @csrf
 
-        <label for="name">Nome</label>
-        <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required>
-        @error('name') <div class="text-danger">{{ $message }}</div> @enderror
+            <label for="name">Nome</label>
+            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required>
+            @error('name') <div class="text-danger">{{ $message }}</div> @enderror
 
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required>
-        @error('email') <div class="text-danger">{{ $message }}</div> @enderror
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required>
+            @error('email') <div class="text-danger">{{ $message }}</div> @enderror
 
-        <label>Foto de Perfil</label>
-        @if ($user->profile_photo)
-            <img src="{{ asset('storage/profile_photos/' . $user->profile_photo) }}" alt="Foto de Perfil" class="profile-photo">
-        @else
-            <div class="profile-photo-placeholder">Sem foto</div>
-        @endif
-        <input type="file" name="profile_photo" accept="image/*">
-        @error('profile_photo') <div class="text-danger">{{ $message }}</div> @enderror
+            <label>Foto de Perfil</label>
+            @if ($user->profile_photo)
+                <img src="{{ asset('storage/profile_photos/' . $user->profile_photo) }}" alt="Foto de Perfil" class="profile-photo">
+            @else
+                <div class="profile-photo-placeholder">Sem foto</div>
+            @endif
+            <input type="file" name="profile_photo" accept="image/*">
+            @error('profile_photo') <div class="text-danger">{{ $message }}</div> @enderror
 
-        <button type="submit" class="btn-edit-profile">Salvar</button>
-    </form>
+            <button type="submit" class="btn-edit-profile">Salvar</button>
+        </form>
+    </div>
 </div>
 @endsection

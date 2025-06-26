@@ -2,6 +2,7 @@
 
 @section('styles')
 <style>
+
     .profile-container {
         max-width: 480px;
         margin: 40px auto;
@@ -72,19 +73,21 @@
 @endsection
 
 @section('content')
-<div class="profile-container">
-    <h2 class="profile-title">Perfil de {{ $user->name }}</h2>
+<div style="background-color: #e8c2c2; min-height: 100vh; padding: 60px 20px;">
+    <div class="profile-container">
+        <h2 class="profile-title">Perfil de {{ $user->name }}</h2>
 
-    @if ($user->profile_photo)
-        <img src="{{ asset('storage/profile_photos/' . $user->profile_photo) }}" alt="Foto de Perfil" class="profile-photo">
-    @else
-        <div class="profile-photo-placeholder">
-            Sem foto
-        </div>
-    @endif
+        @if ($user->profile_photo)
+            <img src="{{ asset('storage/profile_photos/' . $user->profile_photo) }}" alt="Foto de Perfil" class="profile-photo">
+        @else
+            <div class="profile-photo-placeholder">
+                Sem foto
+            </div>
+        @endif
 
-    <p class="profile-email"><strong>Email:</strong> {{ $user->email }}</p>
+        <p class="profile-email"><strong>Email:</strong> {{ $user->email }}</p>
 
-    <a href="{{ route('profile.edit') }}" class="btn-edit-profile">Editar Perfil</a>
+        <a href="{{ route('profile.edit') }}" class="btn-edit-profile">Editar Perfil</a>
+    </div>
 </div>
 @endsection
