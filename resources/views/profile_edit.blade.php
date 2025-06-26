@@ -116,9 +116,13 @@
             <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required>
             @error('name') <div class="text-danger">{{ $message }}</div> @enderror
 
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required>
-            @error('email') <div class="text-danger">{{ $message }}</div> @enderror
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" class="form-control"
+                       value="{{ old('email', $user->email) }}" required>
+                @error('email') <div class="text-danger">{{ $message }}</div> @enderror
+            </div>
 
             <label>Foto de Perfil</label>
             @if ($user->profile_photo)

@@ -485,7 +485,122 @@
                         </button>
                     </div>
                 </div>
+<<<<<<< HEAD
             </div>
+=======
+            @else
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Dashboard</h5>
+                            <div class="d-flex align-items-center">
+                                <select class="form-control w-auto me-2" id="baby-selector">
+                                    @foreach($babies as $b)
+                                        <option value="{{ $b->id }}" {{ $b->id === $baby->id ? 'selected' : '' }}>
+                                            {{ $b->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addBabyModal">
+                                    <i class="fas fa-plus"></i> Adicionar Bebê
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Coluna de Amamentação -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Amamentação</div>
+                            <div class="card-body">
+                                <div class="timer text-center mb-3" id="timer">00:00</div>
+                                
+                                <div class="text-center mb-3">
+                                    <button id="btnStart" class="btn btn-primary">Iniciar</button>
+                                    <button id="btnStop" class="btn btn-danger" disabled>Parar</button>
+                                </div>
+
+                                <div class="input-section" id="inputSection" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="ml">Quantidade de leite (mL) <small>(opcional)</small>:</label>
+                                        <input type="number" class="form-control" id="ml" placeholder="Ex: 120">
+                                    </div>
+                                    <button type="button" id="btnSave" class="btn btn-success btn-block mt-2">Salvar Registro</button>
+                                </div>
+
+                                <div class="mt-4">
+                                    <h5>Registros</h5>
+                                    <div id="registros" class="mt-3">
+                                        @forelse($feedings as $feeding)
+                                            <div class="registro">
+                                                <strong>Data:</strong> {{ $feeding->started_at->format('d/m/Y H:i') }}<br>
+                                                <strong>Duração:</strong> {{ $feeding->formatted_duration }}<br>
+                                                <strong>Quantidade:</strong> {{ $feeding->quantity ? $feeding->quantity . ' mL' : 'não informado' }}
+                                            </div>
+                                        @empty
+                                            <p class="text-muted text-center">Nenhum registro de amamentação encontrado.</p>
+                                        @endforelse
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coluna de Alarmes -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Alarmes</span>
+                                <button id="test-alarm-btn" class="btn btn-warning btn-sm ms-2" type="button">
+                                    <i class="fas fa-bell"></i> Testar Alarme
+                                </button>
+                                {{-- Futuro botão de adicionar alarme --}}
+                            </div>
+                            <div class="card-body">
+                                @forelse($alarms as $alarm)
+                                    <div class="alarm-item d-flex justify-content-between align-items-center mb-2">
+                                        <span class="alarm-time">{{ $alarm->formatted_time }}</span>
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-secondary me-2 edit-alarm-btn" data-bs-toggle="modal" data-bs-target="#editAlarmModal" data-alarm-id="{{ $alarm->id }}" data-alarm-time="{{ $alarm->time }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <div class="custom-control custom-switch d-inline-block">
+                                                <input type="checkbox" class="custom-control-input alarm-toggle" 
+                                                    id="alarm-{{ $alarm->id }}" 
+                                                    data-alarm-id="{{ $alarm->id }}"
+                                                    {{ $alarm->is_active ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="alarm-{{ $alarm->id }}"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-muted text-center">Nenhum alarme configurado.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Coluna de Dicas -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Dicas do Dia</div>
+                            <div class="card-body">
+                                <div id="tipsContainer">
+                                    <div class="text-center">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Carregando...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+>>>>>>> upstream/main
         </div>
 
         <div class="row row-cols-1 row-cols-md-3 g-3">
