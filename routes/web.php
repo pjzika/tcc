@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Storage;
 
 // Rotas públicas
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/recursos', [ResourceController::class, 'index'])->name('resources');
 Route::get('/sobre', [AboutController::class, 'index'])->name('about');
 
 // Rotas de autenticação (acessíveis apenas para visitantes)
