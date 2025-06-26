@@ -485,9 +485,7 @@
                         </button>
                     </div>
                 </div>
-<<<<<<< HEAD
             </div>
-=======
             @else
                 <div class="card mb-4">
                     <div class="card-header">
@@ -600,7 +598,6 @@
                     </div>
                 </div>
             @endif
->>>>>>> upstream/main
         </div>
 
         <div class="row row-cols-1 row-cols-md-3 g-3">

@@ -15,7 +15,6 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\TipsController;
 use Illuminate\Support\Facades\Storage;
 
-
 // Rotas públicas
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/sobre', [AboutController::class, 'index'])->name('about');
