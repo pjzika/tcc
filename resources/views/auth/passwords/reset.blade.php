@@ -1,111 +1,64 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card mt-5">
-                <div class="card-header text-center">
-                    <h4>Redefinir Senha</h4>
-                </div>
+<div style="background-color: #e8c2c2; min-height: 100vh; padding: 60px 20px;">
+    <div style="max-width: 420px; margin: 0 auto; background-color: #ffffff;
+                padding: 40px 40px 30px; border-radius: 20px;
+                box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.08);">
+                
+        <h2 style="font-size: 28px; color: #6b1f1f; font-weight: bold; text-align: center; margin-bottom: 10px;">
+            Redefinir Senha
+        </h2>
+        <p style="font-size: 15px; color: #000; text-align: center; margin-bottom: 30px;">
+            Insira seu email e nova senha para redefinir
+        </p>
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('password.update') }}">
-                        @csrf
-                        <input type="hidden" name="token" value="{{ $token }}">
+        <form method="POST" action="{{ route('password.update') }}">
+            @csrf
+            <input type="hidden" name="token" value="{{ $token }}">
 
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                   id="email" name="email" value="{{ $email ?? old('email') }}" required>
-                            @error('email')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Nova Senha</label>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" 
-                                   id="password" name="password" required>
-                            @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password_confirmation" class="form-label">Confirmar Nova Senha</label>
-                            <input type="password" class="form-control" 
-                                   id="password_confirmation" name="password_confirmation" required>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                Redefinir Senha
-                            </button>
-                        </div>
-                    </form>
-                </div>
+            <div style="margin-bottom: 20px;">
+                <label for="email" style="display: block; font-size: 15px; margin-bottom: 8px; color: #333;">
+                    E-mail:
+                </label>
+                <input id="email" type="email" name="email" required autofocus
+                       value="{{ $email ?? old('email') }}"
+                       style="width: 100%; height: 42px; padding: 10px 15px;
+                              border: none; border-radius: 10px; background-color: #f2f2f2; font-size: 15px;">
+                @error('email')
+                    <div style="color: #e53e3e; font-size: 13px; margin-top: 5px;">{{ $message }}</div>
+                @enderror
             </div>
-        </div>
+
+            <div style="margin-bottom: 20px;">
+                <label for="password" style="display: block; font-size: 15px; margin-bottom: 8px; color: #333;">
+                    Nova Senha:
+                </label>
+                <input id="password" type="password" name="password" required
+                       style="width: 100%; height: 42px; padding: 10px 15px;
+                              border: none; border-radius: 10px; background-color: #f2f2f2; font-size: 15px;">
+                @error('password')
+                    <div style="color: #e53e3e; font-size: 13px; margin-top: 5px;">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <label for="password_confirmation" style="display: block; font-size: 15px; margin-bottom: 8px; color: #333;">
+                    Confirmar Nova Senha:
+                </label>
+                <input id="password_confirmation" type="password" name="password_confirmation" required
+                       style="width: 100%; height: 42px; padding: 10px 15px;
+                              border: none; border-radius: 10px; background-color: #f2f2f2; font-size: 15px;">
+            </div>
+
+            <div style="text-align: center;">
+                <button type="submit"
+                        style="background-color: #a33c3c; color: #fff; border: none;
+                               border-radius: 10px; font-size: 18px; padding: 10px 40px; cursor: pointer;">
+                    Redefinir Senha
+                </button>
+            </div>
+        </form>
     </div>
 </div>
-@endsection
-
-@section('styles')
-<style>
-    .card {
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e2e8f0;
-    }
-
-    .card-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #e2e8f0;
-        padding: 1rem;
-    }
-
-    .card-header h4 {
-        margin: 0;
-        color: #4a1c1c;
-        font-weight: 700;
-        font-size: 1.5rem;
-    }
-
-    .form-label {
-        color: #4a5568;
-        font-weight: 500;
-    }
-
-    .form-control {
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-        transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    .form-control:focus {
-        border-color: #d48c8c;
-        box-shadow: 0 0 0 3px rgba(212, 140, 140, 0.3);
-    }
-
-    .btn-primary {
-        background-color: #d48c8c;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-    }
-
-    .btn-primary:hover {
-        background-color: #c47c7c;
-    }
-
-    .invalid-feedback {
-        color: #e53e3e;
-        font-size: 0.875rem;
-    }
-</style>
 @endsection
