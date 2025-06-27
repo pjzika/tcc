@@ -145,7 +145,7 @@
         });
     </script>
 </head>
-    <link rel="icon" href="{{ asset('icons/logo_icon.png') }}" type="image/png" />
+   <!-- <link rel="icon" href="{{ asset('icons/logo_icon.png') }}" type="image/png" /> -->
 <body>
     <nav class="top-nav navbar navbar-expand-lg">
         <a href="/" class="logo-container navbar-brand">
@@ -158,50 +158,55 @@
         </button>
 
         <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
-            <div class="nav-items d-flex flex-column flex-lg-row gap-3 gap-lg-4 align-items-start align-items-lg-center mt-3 mt-lg-0">
+            <ul class="nav-items navbar-nav d-flex flex-column flex-lg-row gap-3 gap-lg-4 align-items-start align-items-lg-center mt-3 mt-lg-0">
                 @guest
-                    <a href="/" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
-                        <i class="fas fa-home"></i> Início
-                    </a>
+                    <li class="nav-item">
+                        <a href="/" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
+                            <i class="fas fa-home"></i> Início
+                        </a>
+                    </li>
                 @endguest
 
                 @auth
-                    <a href="{{ route('dashboard') }}" class="nav-link {{ request()->is('dashboard*') ? 'active' : '' }}">
-                        Dashboard
-                    </a>
+                    <li class="nav-item">
+                        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->is('dashboard*') ? 'active' : '' }}">
+                            Dashboard
+                        </a>
+                    </li>
                 @endauth
 
-                <a href="/sobre" class="nav-link {{ request()->is('sobre*') ? 'active' : '' }}">Sobre</a>
+                <li class="nav-item">
+                    <a href="/sobre" class="nav-link {{ request()->is('sobre*') ? 'active' : '' }}">Sobre</a>
+                </li>
 
                 @auth
-                    <a href="{{ route('profile') }}" class="nav-link avatar-link">
-                        @if (auth()->user()->profile_photo)
-                            <img src="{{ asset('storage/profile_photos/' . auth()->user()->profile_photo) }}" 
-                                alt="Perfil" class="avatar-img">
-                        @else
-                            <i class="fas fa-user-circle fa-2x"></i>
-                        @endif
-                    </a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn-sair" style="border: none; background: none; cursor: pointer; padding: 0;">
-                            <i class="fas fa-sign-out-alt"></i> <span>Sair</span>
-                        </button>
-                    </form>
+                    <li class="nav-item">
+                        <a href="{{ route('profile') }}" class="nav-link avatar-link">
+                            @if (auth()->user()->profile_photo)
+                                <img src="{{ asset('storage/profile_photos/' . auth()->user()->profile_photo) }}" 
+                                    alt="Perfil" class="avatar-img">
+                            @else
+                                <i class="fas fa-user-circle fa-2x"></i>
+                            @endif
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="btn-sair" style="border: none; background: none; cursor: pointer; padding: 0;">
+                                <i class="fas fa-sign-out-alt"></i> <span>Sair</span>
+                            </button>
+                        </form>
+                    </li>
                 @else
-                    <a href="{{ route('login') }}" class="btn-auth btn-login">Login</a>
-                    <a href="{{ route('register') }}" class="btn-auth btn-register">Registrar</a>
+                    <li class="nav-item">
+                        <a href="{{ route('login') }}" class="btn-auth btn-login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('register') }}" class="btn-auth btn-register">Registrar</a>
+                    </li>
                 @endauth
-            </div>
-        </div>
-    </div>
-</nav>
-
-
-
-    <!-- Outros links comuns -->
-</nav>
-
+            </ul>
         </div>
     </nav>
 
@@ -213,9 +218,97 @@
         © MaternArte {{ date('Y') }} Todos os direitos reservados
     </footer>
 
+    <div class="modal fade" id="customAlertModal" tabindex="-1" aria-labelledby="customAlertModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 18px;">
+          <div class="modal-header" style="background: #b84141; color: #fff; border-top-left-radius: 18px; border-top-right-radius: 18px;">
+            <h5 class="modal-title" id="customAlertModalLabel"><i class="fas fa-exclamation-circle me-2"></i> Alerta</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar" style="filter: invert(1);"></button>
+          </div>
+          <div class="modal-body text-center" id="customAlertModalBody" style="font-size: 1.1rem; color: #4A3735;">
+            <!-- Mensagem será inserida via JS -->
+          </div>
+          <div class="modal-footer" style="border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" style="border-radius: 10px; background: #A65D57; border: none; font-weight: 600;">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="customConfirmModal" tabindex="-1" aria-labelledby="customConfirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 18px;">
+          <div class="modal-header" style="background: #A65D57; color: #fff; border-top-left-radius: 18px; border-top-right-radius: 18px;">
+            <h5 class="modal-title" id="customConfirmModalLabel"><i class="fas fa-question-circle me-2"></i> Confirmação</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar" style="filter: invert(1);"></button>
+          </div>
+          <div class="modal-body text-center" id="customConfirmModalBody" style="font-size: 1.1rem; color: #4A3735;">
+            <!-- Mensagem será inserida via JS -->
+          </div>
+          <div class="modal-footer d-flex justify-content-center" style="border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;">
+            <button type="button" class="btn btn-secondary me-2" id="customConfirmCancelBtn" style="border-radius: 10px;">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="customConfirmOkBtn" style="border-radius: 10px; background: #A65D57; border: none; font-weight: 600;">Confirmar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="{{ asset('js/notifications.js') }}"></script>
     @stack('scripts')
+    <script>
+    function showCustomModal(message, type = 'alert') {
+        const modalLabel = document.getElementById('customAlertModalLabel');
+        const modalBody = document.getElementById('customAlertModalBody');
+        modalBody.innerHTML = message;
+        if (type === 'error') {
+            modalLabel.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Erro';
+            modalLabel.style.color = '#fff';
+            modalLabel.parentElement.style.background = '#b84141';
+        } else if (type === 'success') {
+            modalLabel.innerHTML = '<i class="fas fa-check-circle me-2"></i> Sucesso';
+            modalLabel.style.color = '#fff';
+            modalLabel.parentElement.style.background = '#4BB543';
+        } else {
+            modalLabel.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> Alerta';
+            modalLabel.style.color = '#fff';
+            modalLabel.parentElement.style.background = '#b84141';
+        }
+        const modal = new bootstrap.Modal(document.getElementById('customAlertModal'));
+        modal.show();
+    }
+
+    function showCustomConfirm(message) {
+        return new Promise((resolve) => {
+            const modalLabel = document.getElementById('customConfirmModalLabel');
+            const modalBody = document.getElementById('customConfirmModalBody');
+            modalBody.innerHTML = message;
+            modalLabel.innerHTML = '<i class="fas fa-question-circle me-2"></i> Confirmação';
+            modalLabel.style.color = '#fff';
+            modalLabel.parentElement.style.background = '#A65D57';
+            const modal = new bootstrap.Modal(document.getElementById('customConfirmModal'));
+            modal.show();
+            const okBtn = document.getElementById('customConfirmOkBtn');
+            const cancelBtn = document.getElementById('customConfirmCancelBtn');
+            const cleanup = () => {
+                okBtn.removeEventListener('click', onOk);
+                cancelBtn.removeEventListener('click', onCancel);
+            };
+            function onOk() {
+                cleanup();
+                modal.hide();
+                resolve(true);
+            }
+            function onCancel() {
+                cleanup();
+                modal.hide();
+                resolve(false);
+            }
+            okBtn.addEventListener('click', onOk);
+            cancelBtn.addEventListener('click', onCancel);
+        });
+    }
+    </script>
 </body>
 </html> 

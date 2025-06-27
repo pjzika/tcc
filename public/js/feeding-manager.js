@@ -73,45 +73,39 @@ class FeedingManager {
         this.timerDisplay.textContent = `${min}:${sec}`;
     }
 
-    start() {
+    async start() {
         console.log('Método start chamado');
         if (this.isFeeding) {
             console.log('Já está amamentando, retornando');
             return;
         }
-        
-        if (!confirm('Deseja iniciar a amamentação?')) {
+        if (!(await window.showCustomConfirm('Deseja iniciar a amamentação?'))) {
             console.log('Usuário cancelou início da amamentação');
             return;
         }
-        
         console.log('Iniciando amamentação');
         this.isFeeding = true;
         this.startTime = new Date();
         this.seconds = 0;
-        
         this.timer = setInterval(() => {
             this.seconds++;
             this.updateDisplay();
         }, 1000);
-
         this.startButton.disabled = true;
         this.stopButton.disabled = false;
         this.inputSection.style.display = 'none';
     }
 
-    stop() {
+    async stop() {
         console.log('Método stop chamado');
         if (!this.isFeeding) {
             console.log('Não está amamentando, retornando');
             return;
         }
-        
-        if (!confirm('Deseja parar a amamentação?')) {
+        if (!(await window.showCustomConfirm('Deseja parar a amamentação?'))) {
             console.log('Usuário cancelou parada da amamentação');
             return;
         }
-        
         console.log('Parando amamentação');
         clearInterval(this.timer);
         this.isFeeding = false;
@@ -138,12 +132,12 @@ class FeedingManager {
             });
             
             if (this.seconds === 0) {
-                alert('Não há amamentação para registrar.');
+                window.showCustomModal('Não há amamentação para registrar.', 'alert');
                 return;
             }
 
             if (!this.babySelector || !this.babySelector.value) {
-                alert('Por favor, selecione um bebê.');
+                window.showCustomModal('Por favor, selecione um bebê.', 'alert');
                 return;
             }
 
@@ -211,11 +205,11 @@ class FeedingManager {
             // Atualizar a lista de registros
             await this.atualizarRegistros();
 
-            alert('Registro salvo com sucesso!');
+            window.showCustomModal('Registro salvo com sucesso!', 'success');
 
         } catch (error) {
             console.error('Erro ao salvar registro:', error);
-            alert('Erro ao salvar o registro: ' + error.message);
+            window.showCustomModal('Erro ao salvar o registro: ' + error.message, 'error');
         } finally {
             this.saveButton.disabled = false;
         }

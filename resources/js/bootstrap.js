@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => {
                 console.log('Resposta do servidor:', response.data);
                 if (!response.data.success) {
-                    alert('Erro ao alterar o alarme: ' + response.data.message);
+                    showCustomModal('Erro ao alterar o alarme: ' + response.data.message, 'error');
                     this.checked = !isActive;
                 } else {
                     console.log('Estado do alarme alterado com sucesso.');
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     errorMessage = error.response.data.message;
                 }
                 console.error('Erro ao alterar o alarme:', error.response || error);
-                alert(errorMessage);
+                showCustomModal(errorMessage, 'error');
                 this.checked = !isActive;
             });
         });
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         closeButton.click();
                     }
                 } else {
-                     alert('O servidor respondeu, mas indicou um erro: ' + response.data.message);
+                    showCustomModal('O servidor respondeu, mas indicou um erro: ' + response.data.message, 'error');
                 }
             })
             .catch(error => {
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     errorMessage = error.response.data.message;
                 }
                 console.error('Erro ao atualizar alarme:', error.response || error);
-                alert(errorMessage);
+                showCustomModal(errorMessage, 'error');
             });
         });
     } else {
