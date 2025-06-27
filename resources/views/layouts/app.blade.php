@@ -145,7 +145,6 @@
         });
     </script>
 </head>
-    <link rel="icon" href="{{ asset('icons/logo_icon.png') }}" type="image/png" />
 <body>
     <nav class="top-nav navbar navbar-expand-lg">
         <a href="/" class="logo-container navbar-brand">
