@@ -390,32 +390,6 @@
         transform: scale(1.03);
     }
 
-    .btn-test-alarm {
-        font-size: 16px;
-        background-color: #A65D57;
-        color: white;
-        padding: 6px 20px;
-        border: 2px solid #A65D57;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px; 
-    }
-
-    .btn-test-alarm:hover {
-        background-color: #902f2f;
-        border-color: #902f2f;
-        transform: scale(1.05);
-    }
-
-    .btn-test-alarm:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(166, 93, 87, 0.5);
-    }
-
-
     /* Card Dicas */
     .card-tips {
         background-color: #ffffff;
@@ -472,7 +446,6 @@
 </style>
 @endsection
 
-
 @section('content')
 
 <div class="container-dashboard">
@@ -480,8 +453,12 @@
     @if($babies->isEmpty())
         <div class="d-flex justify-content-center align-items-start">
             <div class="welcome-card">
-                <h2 class="welcome-title">Bem-vindo(a)!</h2>
-                <p class="welcome-text">Para começar a usar o dashboard, por favor, registre seu primeiro bebê.</p>
+                <h2 class="welcome-title">
+                    Bem-vindo(a)!
+                </h2>
+                <p class="welcome-text">
+                    Para começar a usar o dashboard, por favor, registre seu primeiro bebê.
+                </p>
                 <div class="text-center">
                     <button type="button" class="btn-register" data-bs-toggle="modal" data-bs-target="#addBabyModal">
                         Registrar Bebê
@@ -489,7 +466,8 @@
                 </div>
             </div>
         </div>
-    @else
+
+     @else
         <div class="dashboard-top-card">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
@@ -497,9 +475,9 @@
                     <div class="d-flex align-items-center">
                         <select class="form-control w-auto me-2" id="baby-selector">
                             @foreach($babies as $b)
-                                <option value="{{ $b->id }}" {{ $b->id === $baby->id ? 'selected' : '' }}>
-                                    {{ $b->name }}
-                                </option>
+                            <option value="{{ $b->id }}" {{ $b->id === $baby->id ? 'selected' : '' }}>
+                                {{ $b->name }}
+                            </option>
                             @endforeach
                         </select>
                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addBabyModal">
@@ -508,90 +486,190 @@
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="row row-cols-1 row-cols-md-3 g-3">
-            <!-- Coluna de Amamentação -->
-            <div class="col-md-4">
-                <div class="card-feeding">
-                    <div class="feeding-header">Amamentação</div>
-                    <div class="card-body">
-                        <div class="feeding-timer" id="timer">00:00</div>
-                        
-                        <div class="text-center mb-3">
-                            <button id="btnStart" class="btn-feeding-start">Iniciar</button>
-                            <button id="btnStop" class="btn-feeding-stop" disabled>Parar</button>
-                        </div>
-
-                        <div class="feeding-input-section" id="inputSection" style="display: none;">
-                            <div class="form-group">
-                                <label for="ml">Quantidade de leite (mL) <small>(opcional)</small>:</label>
-                                <input type="number" class="form-control" id="ml" placeholder="Ex: 120">
+            @else
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Dashboard</h5>
+                            <div class="d-flex align-items-center">
+                                <select class="form-control w-auto me-2" id="baby-selector">
+                                    @foreach($babies as $b)
+                                        <option value="{{ $b->id }}" {{ $b->id === $baby->id ? 'selected' : '' }}>
+                                            {{ $b->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addBabyModal">
+                                    <i class="fas fa-plus"></i> Adicionar Bebê
+                                </button>
                             </div>
-                            <button type="button" id="btnSave" class="btn-feeding-save mt-2">Salvar Registro</button>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="mt-4">
-                            <h5>Registros</h5>
-                            <div id="registros" class="mt-3">
-                                @forelse($feedings as $feeding)
-                                    <div class="feeding-record">
-                                        <strong>Data:</strong> {{ $feeding->started_at->format('d/m/Y H:i') }}<br>
-                                        <strong>Duração:</strong> {{ $feeding->formatted_duration }}<br>
-                                        <strong>Quantidade:</strong> {{ $feeding->quantity ? $feeding->quantity . ' mL' : 'não informado' }}
+                <div class="row">
+                    <!-- Coluna de Amamentação -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Amamentação</div>
+                            <div class="card-body">
+                                <div class="timer text-center mb-3" id="timer">00:00</div>
+                                
+                                <div class="text-center mb-3">
+                                    <button id="btnStart" class="btn btn-primary">Iniciar</button>
+                                    <button id="btnStop" class="btn btn-danger" disabled>Parar</button>
+                                </div>
+
+                                <div class="input-section" id="inputSection" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="ml">Quantidade de leite (mL) <small>(opcional)</small>:</label>
+                                        <input type="number" class="form-control" id="ml" placeholder="Ex: 120">
+                                    </div>
+                                    <button type="button" id="btnSave" class="btn btn-success btn-block mt-2">Salvar Registro</button>
+                                </div>
+
+                                <div class="mt-4">
+                                    <h5>Registros</h5>
+                                    <div id="registros" class="mt-3">
+                                        @forelse($feedings as $feeding)
+                                            <div class="registro">
+                                                <strong>Data:</strong> {{ $feeding->started_at->format('d/m/Y H:i') }}<br>
+                                                <strong>Duração:</strong> {{ $feeding->formatted_duration }}<br>
+                                                <strong>Quantidade:</strong> {{ $feeding->quantity ? $feeding->quantity . ' mL' : 'não informado' }}
+                                            </div>
+                                        @empty
+                                            <p class="text-muted text-center">Nenhum registro de amamentação encontrado.</p>
+                                        @endforelse
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coluna de Alarmes -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Alarmes</span>
+                                <button id="test-alarm-btn" class="btn btn-warning btn-sm ms-2" type="button">
+                                    <i class="fas fa-bell"></i> Testar Alarme
+                                </button>
+                                {{-- Futuro botão de adicionar alarme --}}
+                            </div>
+                            <div class="card-body">
+                                @forelse($alarms as $alarm)
+                                    <div class="alarm-item d-flex justify-content-between align-items-center mb-2">
+                                        <span class="alarm-time">{{ $alarm->formatted_time }}</span>
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-secondary me-2 edit-alarm-btn" data-bs-toggle="modal" data-bs-target="#editAlarmModal" data-alarm-id="{{ $alarm->id }}" data-alarm-time="{{ $alarm->time }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <div class="custom-control custom-switch d-inline-block">
+                                                <input type="checkbox" class="custom-control-input alarm-toggle" 
+                                                    id="alarm-{{ $alarm->id }}" 
+                                                    data-alarm-id="{{ $alarm->id }}"
+                                                    {{ $alarm->is_active ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="alarm-{{ $alarm->id }}"></label>
+                                            </div>
+                                        </div>
                                     </div>
                                 @empty
-                                    <p class="text-muted text-center">Nenhum registro de amamentação encontrado.</p>
+                                    <p class="text-muted text-center">Nenhum alarme configurado.</p>
                                 @endforelse
                             </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Coluna de Dicas -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Dicas do Dia</div>
+                            <div class="card-body">
+                                <div id="tipsContainer">
+                                    <div class="text-center">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Carregando...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+            <!-- Coluna de Amamentação -->
+            <div class="col-12 col-md-4 mb-4">
+                <div class="card-feeding">
+                    <div class="feeding-header">Amamentação</div>
+                    <div class="feeding-timer" id="timer">00:00</div>
+                    <div class="d-flex justify-content-center mb-3 gap-2">
+                        <button id="btnStart" class="btn-feeding-start">Iniciar</button>
+                        <button id="btnStop" class="btn-feeding-stop" disabled>Parar</button>
+                    </div>
+                    <div class="input-section" id="inputSection" style="display: none;">
+                        <div class="form-group">
+                            <label for="ml">Quantidade de leite (mL) <small>(opcional)</small>:</label>
+                            <input type="number" class="form-control" id="ml" placeholder="Ex: 120">
+                        </div>
+                        <button type="button" id="btnSave" class="btn-feeding-save btn-block mt-2">Salvar Registro</button>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5>Registros</h5>
+                        <div id="registros" class="mt-3">
+                            @forelse($feedings as $feeding)
+                            <div class="feeding-record">
+                                <strong>Data:</strong> {{ $feeding->started_at->format('d/m/Y H:i') }}<br>
+                                <strong>Duração:</strong> {{ $feeding->formatted_duration }}<br>
+                                <strong>Quantidade:</strong> {{ $feeding->quantity ? $feeding->quantity . ' mL' : 'não informado' }}
+                            </div>
+                            @empty
+                            <p class="text-muted text-center">Nenhum registro de amamentação encontrado.</p>
+                            @endforelse
                         </div>
                     </div>
                 </div>
             </div>
 
-
             <!-- Coluna de Alarmes -->
-            <div class="col-md-4">
-                <div class="card-alarm">
-                    <div class="alarm-header d-flex justify-content-between align-items-center">
-                        <span>Alarmes</span>
-                           <button id="test-alarm-btn" class="btn-test-alarm btn-sm" type="button">
-                                <i class="fas fa-bell"></i> Testar Alarme
-                            </button>
-                            {{-- Futuro botão de adicionar alarme --}}
-                    </div>
-                    <div class="alarm-body">
-                        @forelse($alarms as $alarm)
-                            <div class="alarm-item d-flex justify-content-between align-items-center mb-2">
+                <div class="col-12 col-md-4 mb-4">
+                    <div class="card-alarm">
+                        <div class="alarm-header">Alarmes</div>
+                        <div class="alarm-body">
+                            @forelse($alarms as $alarm)
+                            <div class="alarm-item d-flex justify-content-between align-items-center mb-3">
                                 <span class="alarm-time">{{ $alarm->formatted_time }}</span>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-secondary me-2 edit-alarm-btn" data-bs-toggle="modal" data-bs-target="#editAlarmModal" data-alarm-id="{{ $alarm->id }}" data-alarm-time="{{ $alarm->time }}">
+                                <div class="d-flex align-items-center gap-2">
+                                    <button class="btn btn-sm btn-outline-secondary edit-alarm-btn"
+                                        data-bs-toggle="modal" data-bs-target="#editAlarmModal"
+                                        data-alarm-id="{{ $alarm->id }}"
+                                        data-alarm-time="{{ $alarm->time }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <div class="form-check form-switch d-inline-block">
-                                        <input type="checkbox" class="form-check-input alarm-toggle" 
-                                            id="alarm-{{ $alarm->id }}" 
-                                            data-alarm-id="{{ $alarm->id }}"
+                                    <div class="form-check form-switch m-0">
+                                        <input class="form-check-input alarm-toggle" type="checkbox"
+                                            id="alarm-{{ $alarm->id }}" data-alarm-id="{{ $alarm->id }}"
                                             {{ $alarm->is_active ? 'checked' : '' }}>
                                         <label class="form-check-label" for="alarm-{{ $alarm->id }}"></label>
                                     </div>
                                 </div>
                             </div>
-                        @empty
+                            @empty
                             <p class="text-muted text-center">Nenhum alarme configurado.</p>
-                        @endforelse
+                            @endforelse
+                        </div>
                     </div>
                 </div>
-            </div>
-
-
 
             <!-- Coluna de Dicas -->
-            <div class="col-md-4">
-                <div class="card card-tips">
-                    <div class="card-header tips-header">Dicas do Dia</div>
-                    <div class="card-body tips-body">
-                        <div id="tipsContainer">
+                <div class="col-12 col-md-4 mb-4">
+                    <div class="card-tips">
+                        <div class="tips-header">Dicas do Dia</div>
+                        <div class="tips-body" id="tipsContainer">
                             <div class="text-center">
                                 <div class="spinner-border text-primary" role="status">
                                     <span class="visually-hidden">Carregando...</span>
@@ -602,8 +680,9 @@
                 </div>
             </div>
         </div>
-    @endif
-
+        @endif
+    </div>
+</div>
 </div>
 
 <!-- Modal Adicionar Bebê -->

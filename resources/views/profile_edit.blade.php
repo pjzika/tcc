@@ -105,20 +105,16 @@
 @endsection
 
 @section('content')
-<div  style="background-color: #e8c2c2; min-height: 100vh; padding: 60px 20px;">
+<div style="background-color: #e8c2c2; min-height: 100vh; padding: 60px 20px;">
     <div class="profile-container">
-        <h1 class="profile-title">Editar Perfil</h1>
+        <h2 class="profile-title">Editar Perfil</h2>
 
         <form method="POST" action="{{ route('profile.edit') }}" enctype="multipart/form-data">
             @csrf
 
-            <!-- Nome -->
-            <div class="form-group">
-                <label for="name">Nome</label>
-                <input type="text" name="name" id="name" class="form-control"
-                       value="{{ old('name', $user->name) }}" required>
-                @error('name') <div class="text-danger">{{ $message }}</div> @enderror
-            </div>
+            <label for="name">Nome</label>
+            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required>
+            @error('name') <div class="text-danger">{{ $message }}</div> @enderror
 
             <!-- Email -->
             <div class="form-group">
@@ -128,7 +124,7 @@
                 @error('email') <div class="text-danger">{{ $message }}</div> @enderror
             </div>
 
-            <!-- Senha atual (obrigatório para mudar email) -->
+              <!-- Senha atual (obrigatório para mudar email) -->
             <div class="form-group">
                 <label for="current_password">Senha atual <span class="text-muted" style="font-size:0.9em;">(necessária para mudar o email)</span></label>
                 <input type="password" name="current_password" id="current_password" class="form-control" autocomplete="current-password">
@@ -149,18 +145,14 @@
                 @error('password_confirmation') <div class="text-danger">{{ $message }}</div> @enderror
             </div>
 
-            <!-- Foto de Perfil -->
-            <div class="form-group">
-                <label>Foto de Perfil</label><br>
-                @if ($user->profile_photo)
-                    <img src="{{ asset('storage/profile_photos/' . $user->profile_photo) }}" alt="Foto de Perfil" class="profile-photo">
-                @else
-                    <div class="profile-photo-placeholder">Sem foto.</div>
-                @endif
-
-                <input type="file" name="profile_photo" class="form-control-file" accept="image/*">
-                @error('profile_photo') <div class="text-danger">{{ $message }}</div> @enderror
-            </div>
+            <label>Foto de Perfil</label>
+            @if ($user->profile_photo)
+                <img src="{{ asset('storage/profile_photos/' . $user->profile_photo) }}" alt="Foto de Perfil" class="profile-photo">
+            @else
+                <div class="profile-photo-placeholder">Sem foto</div>
+            @endif
+            <input type="file" name="profile_photo" accept="image/*">
+            @error('profile_photo') <div class="text-danger">{{ $message }}</div> @enderror
 
             <button type="submit" class="btn-edit-profile">Salvar</button>
         </form>
